@@ -7,6 +7,8 @@
 #ifndef HEAD_H
 #define HEAD_H
 //defines
+	//Float Precision for Print: how many digits to print after float decimal point
+		#define FPP 4
 	//ANSI color
 		#define COLOR_NORM "\033[0m"
 		#define COLOR_SUCC "\033[32m"

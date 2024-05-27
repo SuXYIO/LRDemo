@@ -55,14 +55,14 @@ int main(int const argc, char* const argv[]) {
 		f_w -= eta * grad_w;
 		f_b -= eta * grad_b;
 		//print results
-		printf("%siter = %d, f_w = %.4f, f_b = %.4f, g_w = %.4f, g_b = %.4f, l = %.4f, grad_w = %.4f, grad_b = %.4f; \n%s", COLOR_NORM, iter, f_w, f_b, g_w, g_b, l, grad_w, grad_b, COLOR_END);
+		printf("%siter = %d, f_w = %.*f, f_b = %.*f, g_w = %.*f, g_b = %.*f, l = %.*f, grad_w = %.*f, grad_b = %.*f; \n%s", COLOR_NORM, iter, FPP, f_w, FPP, f_b, FPP, g_w, FPP, g_b, FPP, l, FPP, grad_w, FPP, grad_b, COLOR_END);
 		//check if gradient explosion
 		if (isfinite(l) != true || isfinite(grad_w) != true || isfinite(grad_b) != true) {
-			printf("%s\nERROR: l or grad_w or grad_b not finite, probably gradient explosion. \n%siter = %d, \nf_w = %.4f, f_b = %.4f, \ng_w = %.4f, g_b = %.4f, \neta = %.4f, batch_size = %d, \nl = %.4f, l_exp = %.4f\n%s", COLOR_ERROR, COLOR_END, iter, f_w, f_b, g_w, g_b, eta, batch_size, l, l_exp, COLOR_END);
+			printf("%s\nERROR: l or grad_w or grad_b not finite, probably gradient explosion. \n%siter = %d, \nf_w = %.*f, f_b = %.*f, \ng_w = %.*f, g_b = %.*f, \neta = %.*f, batch_size = %d, \nl = %.*f, l_exp = %.*f\n%s", COLOR_ERROR, COLOR_END, iter, FPP, f_w, FPP, f_b, FPP, g_w, FPP, g_b, FPP, eta, batch_size, FPP, l, FPP, l_exp, COLOR_END);
 			return -1;
 		}
 		iter++;
 	} while (l >= l_exp);
-	printf("%s\nSUCCESS: l >= l_exp. \n%siter = %d, \nf_w_init = %.4f, f_b_init = %.4f, \nf_w = %.4f, f_b = %.4f, \ng_w = %.4f, g_b = %.4f, \neta = %.4f, batch_size = %d, \nl = %.4f, l_exp = %.4f\n%s", COLOR_SUCC, COLOR_END, iter, f_w_init, f_b_init, f_w, f_b, g_w, g_b, eta, batch_size, l, l_exp, COLOR_END);
+	printf("%s\nSUCCESS: l >= l_exp. \n%siter = %d, \nf_w_init = %.*f, f_b_init = %.*f, \nf_w = %.*f, f_b = %.*f, \ng_w = %.*f, g_b = %.*f, \neta = %.*f, batch_size = %d, \nl = %.*f, l_exp = %.*f\n%s", COLOR_SUCC, COLOR_END, iter, FPP, f_w_init, FPP, f_b_init, FPP, f_w, FPP, f_b, FPP, g_w, FPP, g_b, FPP, eta, batch_size, FPP, l, FPP, l_exp, COLOR_END);
 	return 0;
 }
