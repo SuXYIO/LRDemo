@@ -34,18 +34,18 @@ double MSE_grad_b(double e, double x) {
 	return grad_b;
 }
 
-//random using time square
-int trand(void) {
+//seed random using sec * nsec
+int strand(void) {
 	struct timespec ts;
 	clock_gettime(CLOCK_REALTIME, &ts);
-	int seed = ts.tv_nsec * ts.tv_nsec;
+	int seed = ts.tv_nsec * time(NULL);
 	srand(seed);
-	return rand();
+	return 0;
 }
 
 //Normal distro random
 double rand_uniform() {
-	return (double) trand() / RAND_MAX;
+	return (double) rand() / RAND_MAX;
 }
 double box_muller() {
 	static double r[2];

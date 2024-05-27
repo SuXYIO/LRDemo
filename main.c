@@ -33,7 +33,10 @@ int main(int const argc, char* const argv[]) {
 	//record initial f_w & f_b for future use
 		double f_w_init = f_w;
 		double f_b_init = f_b;
-	int iter = 0;
+	//seed rand
+		strand();
+	//count iteration
+		int iter = 0;
 	do {
 		//calc batch
 		for (int i = 0; i < batch_size; i++) {

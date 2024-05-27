@@ -19,6 +19,6 @@
 		double MSE(double e, double a);
 		double MSE_grad_w(double e, double x);
 		double MSE_grad_b(double e, double x);
-		int trand(void);
+		int strand(void);
 		double rand_nml(double mean, double stddev);
 #endif
