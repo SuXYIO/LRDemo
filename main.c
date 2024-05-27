@@ -29,7 +29,10 @@ int main(int const argc, char* const argv[]) {
 	//set learning rate & loss expected & batch size
 		eta = 0.001;
 		l_exp = 0.0001;
-		batch_size = 64;
+		batch_size = 256;
+	//record initial f_w & f_b for future use
+		double f_w_init = f_w;
+		double f_b_init = f_b;
 	int iter = 0;
 	do {
 		//calc batch
@@ -57,6 +60,6 @@ int main(int const argc, char* const argv[]) {
 		}
 		iter++;
 	} while (l >= l_exp);
-	printf("%s\nSUCCESS: l >= l_exp. \n%siter = %d, \nf_w = %.4f, f_b = %.4f, \ng_w = %.4f, g_b = %.4f, \neta = %.4f, batch_size = %d, \nl = %.4f, l_exp = %.4f\n%s", COLOR_SUCC, COLOR_END, iter, f_w, f_b, g_w, g_b, eta, batch_size, l, l_exp, COLOR_END);
+	printf("%s\nSUCCESS: l >= l_exp. \n%siter = %d, \nf_w_init = %.4f, f_b_init = %.4f, \nf_w = %.4f, f_b = %.4f, \ng_w = %.4f, g_b = %.4f, \neta = %.4f, batch_size = %d, \nl = %.4f, l_exp = %.4f\n%s", COLOR_SUCC, COLOR_END, iter, f_w_init, f_b_init, f_w, f_b, g_w, g_b, eta, batch_size, l, l_exp, COLOR_END);
 	return 0;
 }
