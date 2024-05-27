@@ -1,8 +1,9 @@
 #include "head.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include <math.h>
+#include <string.h>
+#include <stdbool.h>
 
 //weights & biases
 	double f_w = 0.0;
@@ -30,6 +31,20 @@ int main(int const argc, char* const argv[]) {
 		eta = 0.001;
 		l_exp = 0.0001;
 		batch_size = 256;
+	//check command args
+		/*
+		0: -q
+			Quiet mode, only prints end info. 
+		*/
+		int const eargc = 1;
+		char* const eargv[eargc] = {"-q"};
+		bool argb[eargc] = {false};
+		for (int i = 1; i < argc; i++) {
+			for (int j = 0; j < eargc; j++) {
+				if (strcmp(argv[i], eargv[j]) == 0)
+					argb[j] = true;
+			}
+		}
 	//record initial f_w & f_b for future use
 		double f_w_init = f_w;
 		double f_b_init = f_b;
@@ -55,14 +70,15 @@ int main(int const argc, char* const argv[]) {
 		f_w -= eta * grad_w;
 		f_b -= eta * grad_b;
 		//print results
-		printf("%siter = %d, f_w = %.*f, f_b = %.*f, g_w = %.*f, g_b = %.*f, l = %.*f, grad_w = %.*f, grad_b = %.*f; \n%s", COLOR_NORM, iter, FPP, f_w, FPP, f_b, FPP, g_w, FPP, g_b, FPP, l, FPP, grad_w, FPP, grad_b, COLOR_END);
+		if (argb[0] == false)
+			printf("%siter = %d, f_w = %.*f, f_b = %.*f, g_w = %.*f, g_b = %.*f, l = %.*f, grad_w = %.*f, grad_b = %.*f; \n%s", COLOR_NORM, iter, FPP, f_w, FPP, f_b, FPP, g_w, FPP, g_b, FPP, l, FPP, grad_w, FPP, grad_b, COLOR_END);
 		//check if gradient explosion
 		if (isfinite(l) != true || isfinite(grad_w) != true || isfinite(grad_b) != true) {
-			printf("%s\nERROR: l or grad_w or grad_b not finite, probably gradient explosion. \n%siter = %d, \nf_w = %.*f, f_b = %.*f, \ng_w = %.*f, g_b = %.*f, \neta = %.*f, batch_size = %d, \nl = %.*f, l_exp = %.*f\n%s", COLOR_ERROR, COLOR_END, iter, FPP, f_w, FPP, f_b, FPP, g_w, FPP, g_b, FPP, eta, batch_size, FPP, l, FPP, l_exp, COLOR_END);
+			printf("%sERROR: l or grad_w or grad_b not finite, probably gradient explosion. \n%siter = %d, \nf_w = %.*f, f_b = %.*f, \ng_w = %.*f, g_b = %.*f, \neta = %.*f, batch_size = %d, \nl = %.*f, l_exp = %.*f\n%s", COLOR_ERROR, COLOR_END, iter, FPP, f_w, FPP, f_b, FPP, g_w, FPP, g_b, FPP, eta, batch_size, FPP, l, FPP, l_exp, COLOR_END);
 			return -1;
 		}
 		iter++;
 	} while (l >= l_exp);
-	printf("%s\nSUCCESS: l >= l_exp. \n%siter = %d, \nf_w_init = %.*f, f_b_init = %.*f, \nf_w = %.*f, f_b = %.*f, \ng_w = %.*f, g_b = %.*f, \neta = %.*f, batch_size = %d, \nl = %.*f, l_exp = %.*f\n%s", COLOR_SUCC, COLOR_END, iter, FPP, f_w_init, FPP, f_b_init, FPP, f_w, FPP, f_b, FPP, g_w, FPP, g_b, FPP, eta, batch_size, FPP, l, FPP, l_exp, COLOR_END);
+	printf("%sSUCCESS: l >= l_exp. \n%siter = %d, \nf_w_init = %.*f, f_b_init = %.*f, \nf_w = %.*f, f_b = %.*f, \ng_w = %.*f, g_b = %.*f, \neta = %.*f, batch_size = %d, \nl = %.*f, l_exp = %.*f\n%s", COLOR_SUCC, COLOR_END, iter, FPP, f_w_init, FPP, f_b_init, FPP, f_w, FPP, f_b, FPP, g_w, FPP, g_b, FPP, eta, batch_size, FPP, l, FPP, l_exp, COLOR_END);
 	return 0;
 }
