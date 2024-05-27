@@ -34,35 +34,35 @@ double MSE_grad_b(double e, double x) {
 	return grad_b;
 }
 
-//random using time
+//random using time square
 int trand(void) {
 	struct timespec ts;
 	clock_gettime(CLOCK_REALTIME, &ts);
-	int seed = (int) ts.tv_nsec;
+	int seed = ts.tv_nsec * ts.tv_nsec;
 	srand(seed);
 	return rand();
 }
 
 //Normal distro random
 double rand_uniform() {
-    return (double) trand() / RAND_MAX;
+	return (double) trand() / RAND_MAX;
 }
 double box_muller() {
-    static double r[2];
-    double u1, u2, r1, r2;
-    do {
-        u1 = rand_uniform();
-        u2 = rand_uniform();
-        r1 = 2.0 * u1 - 1.0;
-        r2 = 2.0 * u2 - 1.0;
-    } while (r1 * r1 + r2 * r2 > 1.0);
-    double f = sqrt(-2.0 * log(u1));
-    r[0] = r1 * f;
-    r[1] = r2 * f;
-    return r[0];
+	static double r[2];
+	double u1, u2, r1, r2;
+	do {
+		u1 = rand_uniform();
+		u2 = rand_uniform();
+		r1 = 2.0 * u1 - 1.0;
+		r2 = 2.0 * u2 - 1.0;
+	} while (r1 * r1 + r2 * r2 > 1.0);
+	double f = sqrt(-2.0 * log(u1));
+	r[0] = r1 * f;
+	r[1] = r2 * f;
+	return r[0];
 }
 double rand_nml(double mean, double stddev) {
-    double r;
-    r = box_muller();
-    return r * stddev + mean;
+	double r;
+	r = box_muller();
+	return r * stddev + mean;
 }

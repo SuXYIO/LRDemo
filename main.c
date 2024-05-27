@@ -22,13 +22,13 @@ int main(int const argc, char* const argv[]) {
 		double l_exp = 0.0;
 		int batch_size = 0;
 	//init weights and biases with nml distro
-		f_w = rand_nml(1.0, 1.0);
-		f_b = rand_nml(1.0, 1.0);
-		g_w = rand_nml(1.0, 1.0);
-		g_b = rand_nml(1.0, 1.0);
+		f_w = rand_nml(0.0, 1.0);
+		f_b = rand_nml(0.0, 1.0);
+		g_w = rand_nml(0.0, 1.0);
+		g_b = rand_nml(0.0, 1.0);
 	//set learning rate & loss expected & batch size
-		eta = 0.01;
-		l_exp = 0.001;
+		eta = 0.001;
+		l_exp = 0.0001;
 		batch_size = 64;
 	int iter = 0;
 	do {

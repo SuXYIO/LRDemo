@@ -9,8 +9,8 @@
 //defines
 	//ANSI color
 		#define COLOR_NORM "\033[0m"
-		#define COLOR_SUCC "\033[32;1m"
-		#define COLOR_ERROR "\033[31;1m"
+		#define COLOR_SUCC "\033[32m"
+		#define COLOR_ERROR "\033[31m"
 		#define COLOR_END "\033[0m"
 //functions
 	//neuron.c
