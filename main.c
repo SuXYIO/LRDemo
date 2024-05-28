@@ -35,15 +35,52 @@ int main(int const argc, char* const argv[]) {
 		/*
 		0: -q
 			Quiet mode, only prints end info. 
+		1: -v
+			Print version info. 
+		2: -h
+			Help (manual) page, print help page and exit. 
 		*/
-		int const eargc = 1;
-		char* const eargv[eargc] = {"-q"};
+		int const eargc = 3;
+		char const eargv[eargc] = {'q', 'v', 'h'};
 		bool argb[eargc] = {false};
 		for (int i = 1; i < argc; i++) {
-			for (int j = 0; j < eargc; j++) {
-				if (strcmp(argv[i], eargv[j]) == 0)
-					argb[j] = true;
+			if (argv[i][0] == '-') {
+				//is arg
+				for (int j = 1; j < strlen(argv[i]); j++) {
+					for (int k = 0; k < eargc; k++) {
+						if (argv[i][j] == eargv[k])
+							argb[k] = true;
+					}
+				}
 			}
+		}
+	//print version
+		if (argb[1] == true) {
+			printf("Version: %s\n", VER);
+			return 0;
+		}
+	//help (manual) page
+		if (argb[2] == true) {
+			char const manual_path[] = "./manual.txt";
+			char const less_cmd[] = "less -R ";
+			char cmd[sizeof(less_cmd) + sizeof(manual_path)] = "";
+			sprintf(cmd, "%s%s", less_cmd, manual_path);
+			int less_err = system(cmd);
+			if (less_err != 0) {
+				// less error
+				FILE *file;
+				char ch;
+				file = fopen("example.txt", "r");
+				if (file == NULL) {
+					printf("%sError opening ./manual.txt. %sCheck if manual.txt exists. \n%s", COLOR_ERROR, COLOR_END, COLOR_END);
+					return 1;
+				}
+				while ((ch = fgetc(file)) != EOF) {
+					printf("%c", ch);
+				}
+				fclose(file);
+			}
+			return 0;
 		}
 	//record initial f_w & f_b for future use
 		double f_w_init = f_w;
@@ -71,7 +108,7 @@ int main(int const argc, char* const argv[]) {
 		f_b -= eta * grad_b;
 		//print results
 		if (argb[0] == false)
-			printf("%siter = %d, f_w = %.*f, f_b = %.*f, g_w = %.*f, g_b = %.*f, l = %.*f, grad_w = %.*f, grad_b = %.*f; \n%s", COLOR_NORM, iter, FPP, f_w, FPP, f_b, FPP, g_w, FPP, g_b, FPP, l, FPP, grad_w, FPP, grad_b, COLOR_END);
+			printf("%siter = %d, f_w = %.*f, f_b = %.*f, g_w = %.*f, g_b = %.*f, l = %.*f, grad_w = %.*f, grad_b = %.*f; \n%s", COLOR_END, iter, FPP, f_w, FPP, f_b, FPP, g_w, FPP, g_b, FPP, l, FPP, grad_w, FPP, grad_b, COLOR_END);
 		//check if gradient explosion
 		if (isfinite(l) != true || isfinite(grad_w) != true || isfinite(grad_b) != true) {
 			printf("%sERROR: l or grad_w or grad_b not finite, probably gradient explosion. \n%siter = %d, \nf_w = %.*f, f_b = %.*f, \ng_w = %.*f, g_b = %.*f, \neta = %.*f, batch_size = %d, \nl = %.*f, l_exp = %.*f\n%s", COLOR_ERROR, COLOR_END, iter, FPP, f_w, FPP, f_b, FPP, g_w, FPP, g_b, FPP, eta, batch_size, FPP, l, FPP, l_exp, COLOR_END);

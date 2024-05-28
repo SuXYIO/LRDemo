@@ -2,8 +2,7 @@
 ## Intro
 Linear regression demo made with C standard libs.  
 ## Args
-### -q
-Quiet mode, only prints end info.  
+See manual (./LR.out -v).  
 ## Technical Details
 ### Algorithms
 Loss function: MSE  

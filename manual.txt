@@ -1,0 +1,13 @@
+NAME
+	LR (Linear Regression)
+	Version 1.0.0
+SYNOPSIS
+	./LR.out [args]
+DESCRIPTION
+	Linear regression demo made with C standard libs. 
+OPTIONS
+	-q	Quiet mode, only prints end info. 
+	-v	Print version info. 
+	-h	Help (manual) page, prints this manual.  
+AUTHOR
+	SuXYIO

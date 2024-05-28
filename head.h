@@ -1,16 +1,17 @@
 // LR (Linear Regression)
 // Version 1.0.0
-// By SuXY
+// By SuXYIO
 // Created on 2024.05.18
 
 #pragma once
 #ifndef HEAD_H
 #define HEAD_H
 //defines
+	//Version stuff
+		#define VER "1.0.0"
 	//Float Precision for Print: how many digits to print after float decimal point
 		#define FPP 4
 	//ANSI color
-		#define COLOR_NORM "\033[0m"
 		#define COLOR_SUCC "\033[32m"
 		#define COLOR_ERROR "\033[31m"
 		#define COLOR_END "\033[0m"
