@@ -24,4 +24,7 @@
 		double MSE_grad_b(double e, double x);
 		int strand(void);
 		double rand_nml(double mean, double stddev);
+	//func.c
+		int printversion(void);
+		int manualpage(void);
 #endif
