@@ -20,7 +20,10 @@ With versions including and after commit `7bbfc08c43ca8c24be9d7da5e21884a420c4fa
 ./LR.out [options]
 ```
 ### Args
-See manual (./LR.out -h).  
+See manual:
+```bash
+./LR.out -h
+```
 ## Technical Details
 ### Algorithms
 Loss function: MSE  
