@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <pthread.h>
 #include <math.h>
 #include <string.h>
 #include <stdbool.h>
@@ -13,25 +14,6 @@
 	double g_b = 0.0;
 
 int main(int const argc, char* const argv[]) {
-	//init
-		double x = 0.0;
-		double y_f = 0.0;
-		double y_g = 0.0;
-		double l = 0.0;
-		double grad_w = 0.0;
-		double grad_b = 0.0;
-		double eta = 0.0;
-		double l_exp = 0.0;
-		int batch_size = 0;
-	//init weights and biases with nml distro
-		f_w = rand_nml(0.0, 1.0);
-		f_b = rand_nml(0.0, 1.0);
-		g_w = rand_nml(0.0, 1.0);
-		g_b = rand_nml(0.0, 1.0);
-	//set learning rate & loss expected & batch size
-		eta = 0.001;
-		l_exp = 0.0001;
-		batch_size = 256;
 	//check command args
 		/*
 		-q
@@ -61,6 +43,25 @@ int main(int const argc, char* const argv[]) {
 					break;
 			}
 		}
+	//init
+		double x = 0.0;
+		double y_f = 0.0;
+		double y_g = 0.0;
+		double l = 0.0;
+		double grad_w = 0.0;
+		double grad_b = 0.0;
+		double eta = 0.0;
+		double l_exp = 0.0;
+		int batch_size = 0;
+	//init weights and biases with nml distro
+		f_w = rand_nml(0.0, 1.0);
+		f_b = rand_nml(0.0, 1.0);
+		g_w = rand_nml(0.0, 1.0);
+		g_b = rand_nml(0.0, 1.0);
+	//set learning rate & loss expected & batch size
+		eta = 0.001;
+		l_exp = 0.0001;
+		batch_size = 256;
 	//record initial f_w & f_b for future use
 		double f_w_init = f_w;
 		double f_b_init = f_b;
