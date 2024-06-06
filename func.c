@@ -1,12 +1,39 @@
 #include "head.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <pthread.h>
 
+//get weights & biases
+	extern double f_w;
+	extern double f_b;
+	extern double g_w;
+	extern double g_b;
+
+//calculate batch thread function
+void* calc_batch(void* args) {
+	//get args
+	void** arg = (void**) args;
+	double* pl = arg[0];
+	double* pgrad_w = arg[1];
+	double* pgrad_b = arg[2];
+	//calc
+	double x = rand_nml(1.0, 1.0);
+	double y_f = f(x);
+	double y_g = g(x);
+	//pass results
+	*pl += MSE(y_g, y_f);
+	*pgrad_w += MSE_grad_w(y_g, x);
+	*pgrad_b += MSE_grad_b(y_g, x);
+	return NULL;
+}
+
+//other function stuff
+//print version
 int printversion(void) {
 	printf("Name: LR\nVersion: %s\n", VER);
 	return 0;
 }
-
+//show help (manual) page
 int manualpage(void) {
 	char const manual_path[] = "./manual.txt";
 	char const less_cmd[] = "less -R ";

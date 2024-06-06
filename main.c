@@ -25,13 +25,17 @@ int main(int const argc, char* const argv[]) {
 		*/
 		//store opts
 		bool quiet = false;
+		bool use_thread = false;
 		//tmp var
 		int o;
-		const char* optstring = "qvh";
+		const char* optstring = "qtvh";
 		while ((o = getopt(argc, argv, optstring)) != -1) {
 			switch (o) {
 				case 'q':
 					quiet = true;
+					break;
+				case 't':
+					use_thread = true;
 					break;
 				case 'v':
 					printversion();
@@ -44,15 +48,13 @@ int main(int const argc, char* const argv[]) {
 			}
 		}
 	//init
-		double x = 0.0;
-		double y_f = 0.0;
-		double y_g = 0.0;
 		double l = 0.0;
 		double grad_w = 0.0;
 		double grad_b = 0.0;
 		double eta = 0.0;
 		double l_exp = 0.0;
 		int batch_size = 0;
+		int thread_size = 0;
 	//init weights and biases with nml distro
 		f_w = rand_nml(0.0, 1.0);
 		f_b = rand_nml(0.0, 1.0);
@@ -65,19 +67,36 @@ int main(int const argc, char* const argv[]) {
 	//record initial f_w & f_b for future use
 		double f_w_init = f_w;
 		double f_b_init = f_b;
+	//init thread_size
+	//prevent too many threads
+		if (batch_size <= MAX_THREADS)
+			thread_size = batch_size;
+		else
+			thread_size = MAX_THREADS;
 	//seed rand
 		strand();
 	//count iteration
 		int iter = 0;
 	do {
+		//init (just in case)
+		l = 0.0;
+		grad_w = 0.0;
+		grad_b = 0.0;
 		//calc batch
-		for (int i = 0; i < batch_size; i++) {
-			x = rand_nml(1.0, 1.0);
-			y_f = f(x);
-			y_g = g(x);
-			l += MSE(y_g, y_f);
-			grad_w += MSE_grad_w(y_g, x);
-			grad_b += MSE_grad_b(y_g, x);
+		//TODO: Use -t option, remember to add to manual page. 
+		if (use_thread == true) {
+			//use muti-thread to calculate batch
+			pthread_t tid[thread_size];
+			void* args[3] = {&l, &grad_w, &grad_b};
+			for (int i = 0; i < thread_size; i++)
+				pthread_create(&tid[i], NULL, calc_batch, args);
+			for (int i = 0; i < thread_size; i++)
+				pthread_join(tid[i], NULL);
+		} else if (use_thread == false) {
+			//normal calculate batch
+			void* args[3] = {&l, &grad_w, &grad_b};
+			for (int i = 0; i < thread_size; i++)
+				calc_batch(args);
 		}
 		//calc loss & gradients (average of batch)
 		l /= batch_size;

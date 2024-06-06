@@ -7,6 +7,7 @@ DESCRIPTION
 	Linear regression demo made with C standard libs. 
 OPTIONS
 	-q	Quiet mode, only prints end info. 
+	-t	Thread mode, enable muti-thread. Might increase calculation speed if batch_size is large. 
 	-v	Print version info. 
 	-h	Help (manual) page, prints this manual.  
 AUTHOR

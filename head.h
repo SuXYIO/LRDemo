@@ -9,6 +9,8 @@
 //defines
 	//Version stuff
 		#define VER "1.0.0"
+	//Max number of threads to run
+		#define MAX_THREADS 1024
 	//Float Precision for Print: how many digits to print after float decimal point
 		#define FPP 4
 	//ANSI color
@@ -25,6 +27,7 @@
 		int strand(void);
 		double rand_nml(double mean, double stddev);
 	//func.c
+		void* calc_batch(void* args);
 		int printversion(void);
 		int manualpage(void);
 #endif
