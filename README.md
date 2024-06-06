@@ -33,4 +33,4 @@ Random algorithm: Box-muller normal distro
 f(x): Training function, for training  
 g(x): Data function, for generating training data  
 ## Purpose
-A project to help improve C programming skills & understand MLPs better.  
+A project to help improve C programming skills & experiment with and understand MLPs better.  

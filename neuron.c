@@ -40,7 +40,7 @@ int strand(void) {
 	clock_gettime(CLOCK_REALTIME, &ts);
 	int seed = ts.tv_nsec * time(NULL);
 	srand(seed);
-	return 0;
+	return seed;
 }
 
 //Normal distro random

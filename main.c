@@ -26,9 +26,11 @@ int main(int const argc, char* const argv[]) {
 		//store opts
 		bool quiet = false;
 		bool use_thread = false;
+		bool use_seed = false;
+		int seed = 0;
 		//tmp var
 		int o;
-		const char* optstring = "qtvh";
+		const char* optstring = "qts:vh";
 		while ((o = getopt(argc, argv, optstring)) != -1) {
 			switch (o) {
 				case 'q':
@@ -36,6 +38,10 @@ int main(int const argc, char* const argv[]) {
 					break;
 				case 't':
 					use_thread = true;
+					break;
+				case 's':
+					use_seed = true;
+					seed = atoi(optarg);
 					break;
 				case 'v':
 					printversion();
@@ -45,9 +51,16 @@ int main(int const argc, char* const argv[]) {
 					manualpage();
 					return 0;
 					break;
+				case '?':
+					printf("%sError: invalid option: '%c'. %s\nUse \"./LR.out -h\" for help. \n%s", COLOR_ERROR, optopt, COLOR_END, COLOR_END);
+					return -1;
+					break;
 			}
 		}
 	//init
+		//seed rand
+			if (use_seed == false)
+				seed = strand();
 		double l = 0.0;
 		double grad_w = 0.0;
 		double grad_b = 0.0;
@@ -73,8 +86,6 @@ int main(int const argc, char* const argv[]) {
 			thread_size = batch_size;
 		else
 			thread_size = MAX_THREADS;
-	//seed rand
-		strand();
 	//count iteration
 		int iter = 0;
 	do {
@@ -83,7 +94,6 @@ int main(int const argc, char* const argv[]) {
 		grad_w = 0.0;
 		grad_b = 0.0;
 		//calc batch
-		//TODO: Use -t option, remember to add to manual page. 
 		if (use_thread == true) {
 			//use muti-thread to calculate batch
 			pthread_t tid[thread_size];
@@ -115,6 +125,6 @@ int main(int const argc, char* const argv[]) {
 		}
 		iter++;
 	} while (l >= l_exp);
-	printf("%sSUCCESS: l >= l_exp. \n%siter = %d, \nf_w_init = %.*f, f_b_init = %.*f, \nf_w = %.*f, f_b = %.*f, \ng_w = %.*f, g_b = %.*f, \neta = %.*f, batch_size = %d, \nl = %.*f, l_exp = %.*f\n%s", COLOR_SUCC, COLOR_END, iter, FPP, f_w_init, FPP, f_b_init, FPP, f_w, FPP, f_b, FPP, g_w, FPP, g_b, FPP, eta, batch_size, FPP, l, FPP, l_exp, COLOR_END);
+	printf("%sSUCCESS: l >= l_exp. \n%sseed = %d, \niter = %d, \nf_w_init = %.*f, f_b_init = %.*f, \nf_w = %.*f, f_b = %.*f, \ng_w = %.*f, g_b = %.*f, \neta = %.*f, batch_size = %d, \nl = %.*f, l_exp = %.*f\n%s", COLOR_SUCC, COLOR_END, seed, iter, FPP, f_w_init, FPP, f_b_init, FPP, f_w, FPP, f_b, FPP, g_w, FPP, g_b, FPP, eta, batch_size, FPP, l, FPP, l_exp, COLOR_END);
 	return 0;
 }
