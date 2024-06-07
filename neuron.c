@@ -4,10 +4,10 @@
 #include <time.h>
 
 //get weights & biases
-	extern double f_w;
-	extern double f_b;
-	extern double g_w;
-	extern double g_b;
+extern double f_w;
+extern double f_b;
+extern double g_w;
+extern double g_b;
 
 //Functions
 double f(double x) {

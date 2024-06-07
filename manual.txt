@@ -9,7 +9,9 @@ OPTIONS
 	-q	Quiet mode, only prints end info. 
 	-t	Thread mode, enable muti-thread. Might increase calculation speed if batch_size is large. 
 	-s [seed]	Define seed, use the seed to generate random, can duplicate run. If not enabled, the program will seed using time. 
+	-f [filename]	Write info per iteration to a file, in CSV format. Creates one if file doesn't exist, ask if overwrite if it does. 
 	-v	Print version info. 
 	-h	Help (manual) page, prints this manual.  
 AUTHOR
-	SuXYIO
+	SuXYIO (https://github.com/SuXYIO)
+
