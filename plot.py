@@ -14,7 +14,7 @@ import sys
 import matplotlib.pyplot as plt
 import pandas as pd
 
-if sys.argv[1] != '':
+if len(sys.argv) > 1:
     csvfilename = sys.argv[1]
 else:
     PATTERN = ".csv"
