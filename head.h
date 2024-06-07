@@ -1,5 +1,4 @@
 // LR (Linear Regression)
-// Version 1.0.0
 // By SuXYIO
 // Created on 2024.05.18
 
