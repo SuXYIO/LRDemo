@@ -28,7 +28,7 @@ See manual:
 ./LR.out -h
 ```
 ### Other
-1. ./plot.py  
+1. ./stat/plot.py  
 A simple plot python program for plotting the CSV formatted file that can be outputted by LR using `-f` option (see Args).  
 Note that it needs `matplotlib` and `pandas` lib to work.  
 More info in plot.py's first mutiline comment.   
