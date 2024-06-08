@@ -12,20 +12,31 @@ double f_w = 0.0;
 double f_b = 0.0;
 double g_w = 0.0;
 double g_b = 0.0;
+//extern options
+int a_func_num = 0;
 
 int main(int const argc, char* const argv[]) {
+	//init
+	int seed = 0;
+	//seed rand
+	seed = strand();
+	double l = 0.0;
+	double grad_w = 0.0;
+	double grad_b = 0.0;
+	double eta = 0.001;
+	double l_exp = 0.0001;
+	int batch_size = 256;
+	int thread_size = 0;
 	//check command args
 	//store opts
 	bool verbose = false;
 	bool use_thread = false;
-	bool use_seed = false;
-	int seed = 0;
 	bool writetofile = false;
 	char csvfilename[STR_BUFSIZE];
 	FILE* csvfilep = NULL;
 	//tmp var
 	int o;
-	const char* optstring = "Vts:f:vh";
+	const char* optstring = "Vts:f:A:b:e:l:vh";
 	while ((o = getopt(argc, argv, optstring)) != -1) {
 		switch (o) {
 			case 'V':
@@ -35,12 +46,24 @@ int main(int const argc, char* const argv[]) {
 				use_thread = true;
 				break;
 			case 's':
-				use_seed = true;
 				seed = atoi(optarg);
+				srand(atoi(optarg));
 				break;
 			case 'f':
 				writetofile = true;
 				strcpy(csvfilename, optarg);
+				break;
+			case 'A':
+				a_func_num = atoi(optarg);
+				break;
+			case 'b':
+				batch_size = atoi(optarg);
+				break;
+			case 'e':
+				eta = atof(optarg);
+				break;
+			case 'l':
+				l_exp = atof(optarg);
 				break;
 			case 'v':
 				printversion();
@@ -56,35 +79,22 @@ int main(int const argc, char* const argv[]) {
 				break;
 		}
 	}
-	//init
-	//seed rand
-	if (use_seed == false)
-		seed = strand();
-	double l = 0.0;
-	double grad_w = 0.0;
-	double grad_b = 0.0;
-	double eta = 0.0;
-	double l_exp = 0.0;
-	int batch_size = 0;
-	int thread_size = 0;
 	//init weights and biases with nml distro
 	f_w = rand_nml(0.0, 1.0);
 	f_b = rand_nml(0.0, 1.0);
 	g_w = rand_nml(0.0, 1.0);
 	g_b = rand_nml(0.0, 1.0);
-	//set learning rate & loss expected & batch size
-	eta = 0.001;
-	l_exp = 0.0001;
-	batch_size = 256;
 	//record initial f_w & f_b for future use
 	double f_w_init = f_w;
 	double f_b_init = f_b;
 	//init thread_size
 	//prevent too many threads
-	if (batch_size <= MAX_THREADS)
-		thread_size = batch_size;
-	else
-		thread_size = MAX_THREADS;
+	if (use_thread == true) {
+		if (batch_size <= MAX_THREADS)
+			thread_size = batch_size;
+		else
+			thread_size = MAX_THREADS;
+	}
 	//open file if -f is on
 	//check if file is usable
 	if (writetofile == true) {
@@ -125,16 +135,28 @@ int main(int const argc, char* const argv[]) {
 		if (use_thread == true) {
 			//use muti-thread to calculate batch
 			pthread_t tid[thread_size];
+			void* ret = NULL;
 			void* args[3] = {&l, &grad_w, &grad_b};
 			for (int i = 0; i < thread_size; i++)
 				pthread_create(&tid[i], NULL, calc_batch, args);
-			for (int i = 0; i < thread_size; i++)
-				pthread_join(tid[i], NULL);
+			for (int i = 0; i < thread_size; i++) {
+				pthread_join(tid[i], &ret);
+				if (ret != NULL) {
+					printf("%sERROR: undefined activation function number. %sFrom option '-A', a_func_num = %d. \n%s", COLOR_ERROR, COLOR_END, a_func_num, COLOR_END);
+					return -1;
+				}
+			}
 		} else if (use_thread == false) {
 			//normal calculate batch
 			void* args[3] = {&l, &grad_w, &grad_b};
-			for (int i = 0; i < thread_size; i++)
-				calc_batch(args);
+			void* ret;
+			for (int i = 0; i < batch_size; i++) {
+				ret = calc_batch(args);
+				if (ret != NULL) {
+					printf("%sERROR: undefined activation function number. %sFrom option '-A', a_func_num = %d. \n%s", COLOR_ERROR, COLOR_END, a_func_num, COLOR_END);
+					return -1;
+				}
+			}
 		}
 		//calc loss & gradients (average of batch)
 		l /= batch_size;

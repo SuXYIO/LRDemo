@@ -4,10 +4,12 @@
 #include <stdbool.h>
 
 //get weights & biases
-	extern double f_w;
-	extern double f_b;
-	extern double g_w;
-	extern double g_b;
+extern double f_w;
+extern double f_b;
+extern double g_w;
+extern double g_b;
+//get extern options
+extern int a_func_num;
 
 //calculate batch thread function
 void* calc_batch(void* args) {
@@ -16,14 +18,52 @@ void* calc_batch(void* args) {
 	double* pl = arg[0];
 	double* pgrad_w = arg[1];
 	double* pgrad_b = arg[2];
+	//function pointers
+	double (*a_func)(double);
+	double (*l_func)(double, double);
+	double (*grad_w_func)(double, double, double);
+	double (*grad_b_func)(double, double, double);
+	//get functions
+		/*
+		functionnum:
+			0: None
+			1: ReLU
+			2: LeakyReLU
+			3: Sigmoid
+			4: Tanh
+		*/
+	if (a_func_num == 0) {
+		a_func = None;
+		grad_w_func = MSE_grad_w;
+		grad_b_func = MSE_grad_b;
+	} else if (a_func_num == 1) {
+		a_func = ReLU;
+		grad_w_func = MSE_grad_w_ReLU;
+		grad_b_func = MSE_grad_b_ReLU;
+	} else if (a_func_num == 2) {
+		a_func = LReLU;
+		grad_w_func = MSE_grad_w_LReLU;
+		grad_b_func = MSE_grad_b_LReLU;
+	} else if (a_func_num == 3) {
+		a_func = Sigmoid;
+		grad_w_func = MSE_grad_w_Sigmoid;
+		grad_b_func = MSE_grad_b_Sigmoid;
+	} else if (a_func_num == 4) {
+		a_func = Tanh;
+		grad_w_func = MSE_grad_w_Tanh;
+		grad_b_func = MSE_grad_b_Tanh;
+	} else {
+		return (void*)&a_func_num;
+	}
+	l_func = MSE;
 	//calc
 	double x = rand_nml(1.0, 1.0);
-	double y_f = f(x);
-	double y_g = g(x);
+	double y_f = a_func(f(x));
+	double y_g = a_func(g(x));
 	//pass results
-	*pl += MSE(y_g, y_f);
-	*pgrad_w += MSE_grad_w(y_g, x);
-	*pgrad_b += MSE_grad_b(y_g, x);
+	*pl += l_func(y_g, y_f);
+	*pgrad_w += grad_w_func(y_g, y_f, x);
+	*pgrad_b += grad_b_func(y_g, y_f, x);
 	return NULL;
 }
 

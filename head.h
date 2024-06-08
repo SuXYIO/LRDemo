@@ -24,8 +24,23 @@
 		double f(double x);
 		double g(double x);
 		double MSE(double e, double a);
-		double MSE_grad_w(double e, double x);
-		double MSE_grad_b(double e, double x);
+		double MSE_grad_w(double e, double a, double x);
+		double MSE_grad_b(double e, double a, double x);
+		double None(double x);
+		double ReLU(double x);
+		double ReLU_grad(double x);
+		double LReLU(double x);
+		double LReLU_grad(double x);
+		double Sigmoid(double x);
+		double Tanh(double x);
+		double MSE_grad_w_ReLU(double e, double a, double x);
+		double MSE_grad_b_ReLU(double e, double a, double x);
+		double MSE_grad_w_LReLU(double e, double a, double x);
+		double MSE_grad_b_LReLU(double e, double a, double x);
+		double MSE_grad_w_Sigmoid(double e, double a, double x);
+		double MSE_grad_b_Sigmoid(double e, double a, double x);
+		double MSE_grad_w_Tanh(double e, double a, double x);
+		double MSE_grad_b_Tanh(double e, double a, double x);
 		int strand(void);
 		double rand_nml(double mean, double stddev);
 	//func.c
