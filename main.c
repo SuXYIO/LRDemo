@@ -16,7 +16,7 @@ double g_b = 0.0;
 int main(int const argc, char* const argv[]) {
 	//check command args
 	//store opts
-	bool quiet = false;
+	bool verbose = false;
 	bool use_thread = false;
 	bool use_seed = false;
 	int seed = 0;
@@ -25,11 +25,11 @@ int main(int const argc, char* const argv[]) {
 	FILE* csvfilep = NULL;
 	//tmp var
 	int o;
-	const char* optstring = "qts:f:vh";
+	const char* optstring = "Vts:f:vh";
 	while ((o = getopt(argc, argv, optstring)) != -1) {
 		switch (o) {
-			case 'q':
-				quiet = true;
+			case 'V':
+				verbose = true;
 				break;
 			case 't':
 				use_thread = true;
@@ -146,7 +146,7 @@ int main(int const argc, char* const argv[]) {
 		//print results
 		if (writetofile == true)
 			fprintf(csvfilep, "%.*f,%.*f,%.*f,%.*f,%.*f,%.*f,%.*f\n", FPP, f_w, FPP, f_b, FPP, g_w, FPP, g_b, FPP, l, FPP, grad_w, FPP, grad_b);
-		if (quiet == false)
+		if (verbose == true)
 			printf("%siter = %d, f_w = %.*f, f_b = %.*f, g_w = %.*f, g_b = %.*f, l = %.*f, grad_w = %.*f, grad_b = %.*f; \n%s", COLOR_END, iter, FPP, f_w, FPP, f_b, FPP, g_w, FPP, g_b, FPP, l, FPP, grad_w, FPP, grad_b, COLOR_END);
 		//check if gradient explosion
 		if (isfinite(l) != true || isfinite(grad_w) != true || isfinite(grad_b) != true) {
