@@ -5,6 +5,8 @@ Simple example of using two output CSV files of LR to plot one graph.
 
 Usage
     python3 mutiplot.py [filepath0] [filepath1] ...
+    or
+    ./mutiplot.py [filepath0] [filepath1] ...
         "filepath" is the path to the CSV formatted file LR generated. 
 '''
 import sys
