@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 '''
 MutiLinearRegressionPlot
 Simple example of using two output CSV files of LR to plot one graph.

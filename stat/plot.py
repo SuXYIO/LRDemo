@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 '''
 LinearRegressionPlot
 Simple example of using the output CSV file of LR to plot.
