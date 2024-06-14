@@ -15,7 +15,8 @@ double g_b = 0.0;
 //extern options
 int a_func_num = 0;
 
-int main(int const argc, char* const argv[]) {
+int main(int const argc, char* const argv[])
+{
 	//init
 	int seed = 0;
 	//seed rand

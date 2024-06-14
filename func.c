@@ -12,7 +12,8 @@ extern double g_b;
 extern int a_func_num;
 
 //calculate batch thread function
-void* calc_batch(void* args) {
+void* calc_batch(void* args)
+{
 	//get args
 	void** arg = (void**) args;
 	double* pl = arg[0];
@@ -69,7 +70,8 @@ void* calc_batch(void* args) {
 
 //other function stuff
 //test file for writing
-int isusablefile(char* filename) {
+int isusablefile(char* filename)
+{
 	FILE* filep = fopen(filename, "r");
 	if (filep == NULL) {
 		//file doesn't exist, probably
@@ -105,12 +107,14 @@ int isusablefile(char* filename) {
 	return -1;
 }
 //print version
-int printversion(void) {
+int printversion(void)
+{
 	printf("Name: LR\nVersion: %s\n", VER);
 	return 0;
 }
 //show help (manual) page
-int manualpage(void) {
+int manualpage(void)
+{
 	char const manual_path[] = "./manual.txt";
 	char const less_cmd[] = "less -R ";
 	char cmd[sizeof(less_cmd) + sizeof(manual_path)] = "";
