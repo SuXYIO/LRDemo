@@ -130,27 +130,19 @@ int main(int const argc, char* const argv[])
 		if (use_thread == true) {
 			//use muti-thread to calculate batch
 			pthread_t tid[thread_size];
-			void* ret = NULL;
 			void* args[3] = {&l, &grad_w, &grad_b};
+			getfuncs(a_func_num);
 			for (int i = 0; i < thread_size; i++)
 				pthread_create(&tid[i], NULL, calc_batch, args);
 			for (int i = 0; i < thread_size; i++) {
-				pthread_join(tid[i], &ret);
-				if (ret != NULL) {
-					printf("%sERROR: undefined activation function number. %sFrom option '-A', a_func_num = %d. \n%s", COLOR_ERROR, COLOR_END, a_func_num, COLOR_END);
-					return -1;
-				}
+				pthread_join(tid[i], NULL);
 			}
 		} else if (use_thread == false) {
 			//normal calculate batch
 			void* args[3] = {&l, &grad_w, &grad_b};
-			void* ret;
+			getfuncs(a_func_num);
 			for (int i = 0; i < batch_size; i++) {
-				ret = calc_batch(args);
-				if (ret != NULL) {
-					printf("%sERROR: undefined activation function number. %sFrom option '-A', a_func_num = %d. \n%s", COLOR_ERROR, COLOR_END, a_func_num, COLOR_END);
-					return -1;
-				}
+				calc_batch(args);
 			}
 		}
 		//calc loss & gradients (average of batch)

@@ -8,8 +8,17 @@ extern double f_w;
 extern double f_b;
 extern double g_w;
 extern double g_b;
-//get extern options
-extern int a_func_num;
+
+//declare getfunc functions
+double (*get_a_func(int funcnum))(double);
+double (*get_grad_w_func(int funcnum))(double, double, double);
+double (*get_grad_b_func(int funcnum))(double, double, double);
+
+//function pointers
+double (*a_func)(double) = NULL;
+double (*l_func)(double, double) = NULL;
+double (*grad_w_func)(double, double, double) = NULL;
+double (*grad_b_func)(double, double, double) = NULL;
 
 //calculate batch thread function
 void* calc_batch(void* args)
@@ -19,44 +28,6 @@ void* calc_batch(void* args)
 	double* pl = arg[0];
 	double* pgrad_w = arg[1];
 	double* pgrad_b = arg[2];
-	//function pointers
-	double (*a_func)(double);
-	double (*l_func)(double, double);
-	double (*grad_w_func)(double, double, double);
-	double (*grad_b_func)(double, double, double);
-	//get functions
-		/*
-		functionnum:
-			0: None
-			1: ReLU
-			2: LeakyReLU
-			3: Sigmoid
-			4: Tanh
-		*/
-	if (a_func_num == 0) {
-		a_func = None;
-		grad_w_func = MSE_grad_w;
-		grad_b_func = MSE_grad_b;
-	} else if (a_func_num == 1) {
-		a_func = ReLU;
-		grad_w_func = MSE_grad_w_ReLU;
-		grad_b_func = MSE_grad_b_ReLU;
-	} else if (a_func_num == 2) {
-		a_func = LReLU;
-		grad_w_func = MSE_grad_w_LReLU;
-		grad_b_func = MSE_grad_b_LReLU;
-	} else if (a_func_num == 3) {
-		a_func = Sigmoid;
-		grad_w_func = MSE_grad_w_Sigmoid;
-		grad_b_func = MSE_grad_b_Sigmoid;
-	} else if (a_func_num == 4) {
-		a_func = Tanh;
-		grad_w_func = MSE_grad_w_Tanh;
-		grad_b_func = MSE_grad_b_Tanh;
-	} else {
-		return (void*)&a_func_num;
-	}
-	l_func = MSE;
 	//calc
 	double x = rand_nml(1.0, 1.0);
 	double y_f = a_func(f(x));
@@ -66,6 +37,78 @@ void* calc_batch(void* args)
 	*pgrad_w += grad_w_func(y_g, y_f, x);
 	*pgrad_b += grad_b_func(y_g, y_f, x);
 	return NULL;
+}
+
+//get function pointers
+/*
+	functionnum:
+		0: None
+		1: ReLU
+		2: LeakyReLU
+		3: Sigmoid
+		4: Tanh
+*/
+int getfuncs(int funcnum)
+{
+	a_func = get_a_func(funcnum);
+	grad_w_func = get_grad_w_func(funcnum);
+	grad_b_func = get_grad_b_func(funcnum);
+	l_func = MSE;
+	return 0;
+}
+double (*get_a_func(int funcnum))(double)
+{
+	double (*a_func)(double);
+	if (funcnum == 0) {
+		a_func = None;
+	} else if (funcnum == 1) {
+		a_func = ReLU;
+	} else if (funcnum == 2) {
+		a_func = LReLU;
+	} else if (funcnum == 3) {
+		a_func = Sigmoid;
+	} else if (funcnum == 4) {
+		a_func = Tanh;
+	} else {
+		a_func = None;
+	}
+	return a_func;
+}
+double (*get_grad_w_func(int funcnum))(double, double, double)
+{
+	double (*grad_w_func)(double, double, double);
+	if (funcnum == 0) {
+		grad_w_func = MSE_grad_w;
+	} else if (funcnum == 1) {
+		grad_w_func = MSE_grad_w_ReLU;
+	} else if (funcnum == 2) {
+		grad_w_func = MSE_grad_w_LReLU;
+	} else if (funcnum == 3) {
+		grad_w_func = MSE_grad_w_Sigmoid;
+	} else if (funcnum == 4) {
+		grad_w_func = MSE_grad_w_Tanh;
+	} else {
+		grad_w_func = MSE_grad_w;
+	}
+	return grad_w_func;
+}
+double (*get_grad_b_func(int funcnum))(double, double, double)
+{
+	double (*grad_b_func)(double, double, double);
+	if (funcnum == 0) {
+		grad_b_func = MSE_grad_w;
+	} else if (funcnum == 1) {
+		grad_b_func = MSE_grad_w_ReLU;
+	} else if (funcnum == 2) {
+		grad_b_func = MSE_grad_w_LReLU;
+	} else if (funcnum == 3) {
+		grad_b_func = MSE_grad_w_Sigmoid;
+	} else if (funcnum == 4) {
+		grad_b_func = MSE_grad_w_Tanh;
+	} else {
+		grad_b_func = MSE_grad_w;
+	}
+	return grad_b_func;
 }
 
 //other function stuff

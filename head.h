@@ -20,10 +20,11 @@
 		#define COLOR_ERROR "\033[31m"
 		#define COLOR_END "\033[0m"
 //typedefs
-typedef struct {
-	double w;
-	double b;
-} neuron;
+	//neuron
+		typedef struct {
+			double w;
+			double b;
+		} neuron;
 //functions
 	//neuron.c
 		double f(double x);
@@ -50,6 +51,7 @@ typedef struct {
 		double rand_nml(double mean, double stddev);
 	//func.c
 		void* calc_batch(void* args);
+		int getfuncs(int funcnum);
 		int isusablefile(char* filename);
 		int printversion(void);
 		int manualpage(void);
