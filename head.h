@@ -19,6 +19,11 @@
 		#define COLOR_WARN "\033[33m"
 		#define COLOR_ERROR "\033[31m"
 		#define COLOR_END "\033[0m"
+//typedefs
+typedef struct {
+	double w;
+	double b;
+} neuron;
 //functions
 	//neuron.c
 		double f(double x);

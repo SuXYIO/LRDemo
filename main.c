@@ -8,10 +8,8 @@
 #include <stdbool.h>
 
 //weights & biases
-double f_w = 0.0;
-double f_b = 0.0;
-double g_w = 0.0;
-double g_b = 0.0;
+neuron nf;
+neuron ng;
 //extern options
 int a_func_num = 0;
 
@@ -81,13 +79,13 @@ int main(int const argc, char* const argv[])
 		}
 	}
 	//init weights and biases with nml distro
-	f_w = rand_nml(0.0, 1.0);
-	f_b = rand_nml(0.0, 1.0);
-	g_w = rand_nml(0.0, 1.0);
-	g_b = rand_nml(0.0, 1.0);
+	nf.w = rand_nml(0.0, 1.0);
+	nf.b = rand_nml(0.0, 1.0);
+	ng.w = rand_nml(0.0, 1.0);
+	ng.b = rand_nml(0.0, 1.0);
 	//record initial f_w & f_b for future use
-	double f_w_init = f_w;
-	double f_b_init = f_b;
+	double nf_w_init = nf.w;
+	double nf_b_init = nf.b;
 	//init thread_size
 	//prevent too many threads
 	if (use_thread == true) {
@@ -128,10 +126,6 @@ int main(int const argc, char* const argv[])
 	//count iteration
 	int iter = 0;
 	do {
-		//init (just in case)
-		l = 0.0;
-		grad_w = 0.0;
-		grad_b = 0.0;
 		//calc batch
 		if (use_thread == true) {
 			//use muti-thread to calculate batch
@@ -164,23 +158,23 @@ int main(int const argc, char* const argv[])
 		grad_w /= batch_size;
 		grad_b /= batch_size;
 		//update weights & biases
-		f_w -= eta * grad_w;
-		f_b -= eta * grad_b;
+		nf.w -= eta * grad_w;
+		nf.b -= eta * grad_b;
 		//print results
 		if (writetofile == true)
-			fprintf(csvfilep, "%.*f,%.*f,%.*f,%.*f,%.*f,%.*f,%.*f\n", FPP, f_w, FPP, f_b, FPP, g_w, FPP, g_b, FPP, l, FPP, grad_w, FPP, grad_b);
+			fprintf(csvfilep, "%.*f,%.*f,%.*f,%.*f,%.*f,%.*f,%.*f\n", FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, l, FPP, grad_w, FPP, grad_b);
 		if (verbose == true)
-			printf("%siter = %d, f_w = %.*f, f_b = %.*f, g_w = %.*f, g_b = %.*f, l = %.*f, grad_w = %.*f, grad_b = %.*f; \n%s", COLOR_END, iter, FPP, f_w, FPP, f_b, FPP, g_w, FPP, g_b, FPP, l, FPP, grad_w, FPP, grad_b, COLOR_END);
+			printf("%siter = %d, nf.w = %.*f, nf.b = %.*f, ng.w = %.*f, ng.b = %.*f, l = %.*f, grad_w = %.*f, grad_b = %.*f; \n%s", COLOR_END, iter, FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, l, FPP, grad_w, FPP, grad_b, COLOR_END);
 		//check if gradient explosion
 		if (isfinite(l) != true || isfinite(grad_w) != true || isfinite(grad_b) != true) {
-			printf("%sERROR: l or grad_w or grad_b not finite, probably gradient explosion. \n%siter = %d, \nf_w = %.*f, f_b = %.*f, \ng_w = %.*f, g_b = %.*f, \neta = %.*f, batch_size = %d, \nl = %.*f, l_exp = %.*f\n%s", COLOR_ERROR, COLOR_END, iter, FPP, f_w, FPP, f_b, FPP, g_w, FPP, g_b, FPP, eta, batch_size, FPP, l, FPP, l_exp, COLOR_END);
+			printf("%sERROR: l or grad_w or grad_b not finite, probably gradient explosion. \n%siter = %d, \nnf.w = %.*f, nf.b = %.*f, \nng.w = %.*f, ng.b = %.*f, \neta = %.*f, batch_size = %d, \nl = %.*f, l_exp = %.*f\n%s", COLOR_ERROR, COLOR_END, iter, FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, eta, batch_size, FPP, l, FPP, l_exp, COLOR_END);
 			if (writetofile == true)
 				fclose(csvfilep);
 			return -1;
 		}
 		iter++;
 	} while (l >= l_exp);
-	printf("%sSUCC: l >= l_exp. \n%sseed = %d, \niter = %d, \nf_w_init = %.*f, f_b_init = %.*f, \nf_w = %.*f, f_b = %.*f, \ng_w = %.*f, g_b = %.*f, \neta = %.*f, batch_size = %d, \nl = %.*f, l_exp = %.*f\n%s", COLOR_SUCC, COLOR_END, seed, iter, FPP, f_w_init, FPP, f_b_init, FPP, f_w, FPP, f_b, FPP, g_w, FPP, g_b, FPP, eta, batch_size, FPP, l, FPP, l_exp, COLOR_END);
+	printf("%sSUCC: l >= l_exp. \n%sseed = %d, \niter = %d, \nnf.w_init = %.*f, nf.b_init = %.*f, \nnf.w = %.*f, nf.b = %.*f, \nng.w = %.*f, ng.b = %.*f, \neta = %.*f, batch_size = %d, \nl = %.*f, l_exp = %.*f\n%s", COLOR_SUCC, COLOR_END, seed, iter, FPP, nf_w_init, FPP, nf_b_init, FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, eta, batch_size, FPP, l, FPP, l_exp, COLOR_END);
 	if (writetofile == true)
 		fclose(csvfilep);
 	return 0;

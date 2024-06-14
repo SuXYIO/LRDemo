@@ -4,19 +4,17 @@
 #include <time.h>
 
 //get weights & biases
-extern double f_w;
-extern double f_b;
-extern double g_w;
-extern double g_b;
+extern neuron nf;
+extern neuron ng;
 
 //Functions
 double f(double x)
 {
-	return f_w * x + f_b;
+	return nf.w * x + nf.b;
 }
 double g(double x)
 {
-	return g_w * x + g_b;
+	return ng.w * x + nf.b;
 }
 
 //Loss function
@@ -32,13 +30,13 @@ double MSE(double e, double a)
 double MSE_grad_w(double e, double a, double x)
 {
 	double grad_w;
-	grad_w = 2.0*x*(f_w*x + f_b - e);
+	grad_w = 2.0*x*(nf.w*x + nf.b - e);
 	return grad_w;
 }
 double MSE_grad_b(double e, double a, double x)
 {
 	double grad_b;
-	grad_b = 2.0*(f_w*x + f_b - e);
+	grad_b = 2.0*(nf.w*x + nf.b - e);
 	return grad_b;
 }
 
