@@ -1,4 +1,4 @@
-# LR
+# LRDemo
 ## Intro
 Linear regression demo made with C standard & POSIX libs.  
 
@@ -6,11 +6,11 @@ Linear regression demo made with C standard & POSIX libs.
 ### Linux/Unix:
 Clone:
 ```bash
-git clone https://github.com/SuXYIO/LR
+git clone https://github.com/SuXYIO/LRDemo
 ```
 Compile:
 ```
-cd LR
+cd LRDemo
 make
 ```
 ### Windows:
