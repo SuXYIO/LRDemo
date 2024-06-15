@@ -6,8 +6,8 @@
 //get weights & biases
 extern neuron nf;
 extern neuron ng;
-
 //Functions
+
 double f(double x)
 {
 	return nf.w * x + nf.b;
@@ -27,10 +27,10 @@ double MSE(double e, double a)
 	l = pow(e - a, 2);
 	return l;
 }
-double MSE_grad(double e, double a, double x)
+double MSE_grad(double e, double a)
 {
 	double grad;
-	grad = -2.0*(e - nf.w*x - nf.b);
+	grad = -2.0*(e - a);
 	return grad;
 }
 

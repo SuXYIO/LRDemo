@@ -16,13 +16,13 @@ extern int l_func_num;
 double (*get_a_func(int funcnum))(double);
 double (*get_l_func(int funcnum))(double, double);
 double (*get_agrad_func(int funcnum))(double);
-double (*get_lgrad_func(int funcnum))(double, double, double);
+double (*get_lgrad_func(int funcnum))(double, double);
 
 //function pointers
 double (*a_func)(double) = NULL;
 double (*l_func)(double, double) = NULL;
-double (*lgrad_func)(double, double, double) = NULL;
 double (*agrad_func)(double) = NULL;
+double (*lgrad_func)(double, double) = NULL;
 
 //calculate batch thread function
 void* calc_batch(void* args)
@@ -38,8 +38,8 @@ void* calc_batch(void* args)
 	double y_g = a_func(g(x));
 	//pass results
 	*pl += l_func(y_g, y_f);
-	*pgrad_w += lgrad_func(y_g, y_f, x) * agrad_func(x) * x;
-	*pgrad_b += lgrad_func(y_g, y_f, x) * agrad_func(x);
+	*pgrad_w += lgrad_func(y_g, y_f) * agrad_func(x) * x;
+	*pgrad_b += lgrad_func(y_g, y_f) * agrad_func(x);
 	return NULL;
 }
 
@@ -105,9 +105,9 @@ double (*get_agrad_func(int funcnum))(double)
 		func = NULL;
 	return func;
 }
-double (*get_lgrad_func(int funcnum))(double, double, double)
+double (*get_lgrad_func(int funcnum))(double, double)
 {
-	double (*func)(double, double, double);
+	double (*func)(double, double);
 	if (funcnum == 0) {
 		func = MSE_grad;
 	} else {

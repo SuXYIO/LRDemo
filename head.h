@@ -30,7 +30,7 @@
 		double f(double x);
 		double g(double x);
 		double MSE(double e, double a);
-		double MSE_grad(double e, double a, double x);
+		double MSE_grad(double e, double a);
 		double None(double x);
 		double grad(double x);
 		double ReLU(double x);
