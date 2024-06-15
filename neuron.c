@@ -89,49 +89,50 @@ double LReLU_grad(double x)
 }
 
 //Gradients
+//dE/dwi = 2(e - a)
 double MSE_grad_w_ReLU(double e, double a, double x)
 {
 	if (f(x) > 0)
-		return 2.0*x*(a - e);
+		return -2.0*x*(e - a);
 	else
 		return 0.0;
 }
 double MSE_grad_b_ReLU(double e, double a, double x)
 {
 	if (f(x > 0))
-		return 2.0*(a - e);
+		return -2.0*(e - a);
 	else
 		return 0.0;
 }
 double MSE_grad_w_LReLU(double e, double a, double x)
 {
 	if (f(x) > 0)
-		return 2.0*x*(a - e);
+		return -2.0*x*(e - a);
 	else
-		return 2.0*alpha*x*(a - e);
+		return -2.0*alpha*x*(e - a);
 }
 double MSE_grad_b_LReLU(double e, double a, double x)
 {
 	if (f(x > 0))
-		return 2.0*(a - e);
+		return -2.0*(e - a);
 	else
-		return 2.0*alpha*(a - e);
+		return -2.0*alpha*(e - a);
 }
 double MSE_grad_w_Sigmoid(double e, double a, double x)
 {
-	return (a - e)*e*(1 - e)*x;
+	return -(e - a)*e*(1 - e)*x;
 }
 double MSE_grad_b_Sigmoid(double e, double a, double x)
 {
-	return (a - e)*e*(1 - e);
+	return -(e - a)*e*(1 - e);
 }
 double MSE_grad_w_Tanh(double e, double a, double x)
 {
-	return (a - e)*(1 - pow(e, 2))*x;
+	return -(e - a)*(1 - pow(e, 2))*x;
 }
 double MSE_grad_b_Tanh(double e, double a, double x)
 {
-	return (a - e)*(1 - pow(e, 2));
+	return -(e - a)*(1 - pow(e, 2));
 }
 
 //seed random using sec * nsec

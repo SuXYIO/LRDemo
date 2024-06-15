@@ -10,7 +10,7 @@ OPTIONS
 	-t	Thread mode, enable muti-thread. Might increase calculation speed if batch_size is large. 
 	-s [seed]	Define seed, use the seed to generate random, can duplicate run. If not enabled, the program will seed using time (timestamp * nsec). 
 	-f [filename]	Write info per iteration to a file, in CSV format. Creates one if file doesn't exist, ask if overwrite if it does. 
-	-A [functionnum]	Define which activation function to use, 0 is default. If not in the list, then use 0. 
+	-A [functionnum]	Define which activation function to use, 0 is default. 
 		functionnum:
 			0: None
 			1: ReLU

@@ -54,6 +54,8 @@ int getfuncs(int funcnum)
 	grad_w_func = get_grad_w_func(funcnum);
 	grad_b_func = get_grad_b_func(funcnum);
 	l_func = MSE;
+	if (a_func == NULL || grad_w_func == NULL || grad_b_func == NULL || l_func == NULL)
+		return -1;
 	return 0;
 }
 double (*get_a_func(int funcnum))(double)
@@ -70,7 +72,7 @@ double (*get_a_func(int funcnum))(double)
 	} else if (funcnum == 4) {
 		a_func = Tanh;
 	} else {
-		a_func = None;
+		a_func = NULL;
 	}
 	return a_func;
 }
@@ -88,7 +90,7 @@ double (*get_grad_w_func(int funcnum))(double, double, double)
 	} else if (funcnum == 4) {
 		grad_w_func = MSE_grad_w_Tanh;
 	} else {
-		grad_w_func = MSE_grad_w;
+		grad_w_func = NULL;
 	}
 	return grad_w_func;
 }
@@ -106,7 +108,7 @@ double (*get_grad_b_func(int funcnum))(double, double, double)
 	} else if (funcnum == 4) {
 		grad_b_func = MSE_grad_w_Tanh;
 	} else {
-		grad_b_func = MSE_grad_w;
+		grad_b_func = NULL;
 	}
 	return grad_b_func;
 }

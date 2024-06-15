@@ -118,10 +118,15 @@ int main(int const argc, char* const argv[])
 	if (writetofile == true) {
 		csvfilep = fopen(csvfilename, "w");
 		if (csvfilep == NULL) {
-			printf("%sERROR: error opening file. \n%sFile: %s, from option '-f'\n%s", COLOR_ERROR, COLOR_END, csvfilename, COLOR_END);
+			printf("%sERROR: error opening file. \n%sFile: %s, from option \'-f\'\n%s", COLOR_ERROR, COLOR_END, csvfilename, COLOR_END);
 			return -1;
 		}
 		fprintf(csvfilep, "f_w,f_b,g_w,g_b,l,grad_w,grad_b\n");
+	}
+	//get functions
+	if (getfuncs(a_func_num) == -1) {
+		printf("%sERROR: error activation function. \n%sFrom option \'-A\'\n%s", COLOR_ERROR, COLOR_END, COLOR_END);
+		return -1;
 	}
 	//count iteration
 	int iter = 0;
@@ -131,7 +136,6 @@ int main(int const argc, char* const argv[])
 			//use muti-thread to calculate batch
 			pthread_t tid[thread_size];
 			void* args[3] = {&l, &grad_w, &grad_b};
-			getfuncs(a_func_num);
 			for (int i = 0; i < thread_size; i++)
 				pthread_create(&tid[i], NULL, calc_batch, args);
 			for (int i = 0; i < thread_size; i++) {
