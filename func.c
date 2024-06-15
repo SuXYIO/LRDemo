@@ -8,17 +8,21 @@ extern double f_w;
 extern double f_b;
 extern double g_w;
 extern double g_b;
+//extern options
+extern int a_func_num;
+extern int l_func_num;
 
 //declare getfunc functions
 double (*get_a_func(int funcnum))(double);
-double (*get_grad_w_func(int funcnum))(double, double, double);
-double (*get_grad_b_func(int funcnum))(double, double, double);
+double (*get_l_func(int funcnum))(double, double);
+double (*get_agrad_func(int funcnum))(double);
+double (*get_lgrad_func(int funcnum))(double, double, double);
 
 //function pointers
 double (*a_func)(double) = NULL;
 double (*l_func)(double, double) = NULL;
-double (*grad_w_func)(double, double, double) = NULL;
-double (*grad_b_func)(double, double, double) = NULL;
+double (*lgrad_func)(double, double, double) = NULL;
+double (*agrad_func)(double) = NULL;
 
 //calculate batch thread function
 void* calc_batch(void* args)
@@ -34,8 +38,8 @@ void* calc_batch(void* args)
 	double y_g = a_func(g(x));
 	//pass results
 	*pl += l_func(y_g, y_f);
-	*pgrad_w += grad_w_func(y_g, y_f, x);
-	*pgrad_b += grad_b_func(y_g, y_f, x);
+	*pgrad_w += lgrad_func(y_g, y_f, x) * agrad_func(x) * x;
+	*pgrad_b += lgrad_func(y_g, y_f, x) * agrad_func(x);
 	return NULL;
 }
 
@@ -48,69 +52,68 @@ void* calc_batch(void* args)
 		3: Sigmoid
 		4: Tanh
 */
-int getfuncs(int funcnum)
+int getfuncs(void)
 {
-	a_func = get_a_func(funcnum);
-	grad_w_func = get_grad_w_func(funcnum);
-	grad_b_func = get_grad_b_func(funcnum);
-	l_func = MSE;
-	if (a_func == NULL || grad_w_func == NULL || grad_b_func == NULL || l_func == NULL)
+	a_func = get_a_func(a_func_num);
+	agrad_func = get_agrad_func(a_func_num);
+	l_func = get_l_func(l_func_num);
+	lgrad_func = get_lgrad_func(l_func_num);
+	if (a_func == NULL || agrad_func == NULL || lgrad_func == NULL || l_func == NULL)
 		return -1;
 	return 0;
 }
 double (*get_a_func(int funcnum))(double)
 {
-	double (*a_func)(double);
-	if (funcnum == 0) {
-		a_func = None;
-	} else if (funcnum == 1) {
-		a_func = ReLU;
-	} else if (funcnum == 2) {
-		a_func = LReLU;
-	} else if (funcnum == 3) {
-		a_func = Sigmoid;
-	} else if (funcnum == 4) {
-		a_func = Tanh;
-	} else {
-		a_func = NULL;
-	}
-	return a_func;
+	double (*func)(double);
+	if (funcnum == 0)
+		func = None;
+	else if (funcnum == 1)
+		func = ReLU;
+	else if (funcnum == 2)
+		func = LReLU;
+	else if (funcnum == 3)
+		func = Sigmoid;
+	else if (funcnum == 4)
+		func = Tanh;
+	else
+		func = NULL;
+	return func;
 }
-double (*get_grad_w_func(int funcnum))(double, double, double)
+double (*get_l_func(int funcnum))(double, double)
 {
-	double (*grad_w_func)(double, double, double);
-	if (funcnum == 0) {
-		grad_w_func = MSE_grad_w;
-	} else if (funcnum == 1) {
-		grad_w_func = MSE_grad_w_ReLU;
-	} else if (funcnum == 2) {
-		grad_w_func = MSE_grad_w_LReLU;
-	} else if (funcnum == 3) {
-		grad_w_func = MSE_grad_w_Sigmoid;
-	} else if (funcnum == 4) {
-		grad_w_func = MSE_grad_w_Tanh;
-	} else {
-		grad_w_func = NULL;
-	}
-	return grad_w_func;
+	double (*func)(double, double);
+	if (funcnum == 0)
+		func = MSE;
+	else
+		func = NULL;
+	return func;
 }
-double (*get_grad_b_func(int funcnum))(double, double, double)
+double (*get_agrad_func(int funcnum))(double)
 {
-	double (*grad_b_func)(double, double, double);
+	double (*func)(double);
+	if (funcnum == 0)
+		func = grad;
+	else if (funcnum == 1)
+		func = ReLU_grad;
+	else if (funcnum == 2)
+		func = LReLU_grad;
+	else if (funcnum == 3)
+		func = Sigmoid_grad;
+	else if (funcnum == 4)
+		func = Tanh_grad;
+	else
+		func = NULL;
+	return func;
+}
+double (*get_lgrad_func(int funcnum))(double, double, double)
+{
+	double (*func)(double, double, double);
 	if (funcnum == 0) {
-		grad_b_func = MSE_grad_w;
-	} else if (funcnum == 1) {
-		grad_b_func = MSE_grad_w_ReLU;
-	} else if (funcnum == 2) {
-		grad_b_func = MSE_grad_w_LReLU;
-	} else if (funcnum == 3) {
-		grad_b_func = MSE_grad_w_Sigmoid;
-	} else if (funcnum == 4) {
-		grad_b_func = MSE_grad_w_Tanh;
+		func = MSE_grad;
 	} else {
-		grad_b_func = NULL;
+		func = NULL;
 	}
-	return grad_b_func;
+	return func;
 }
 
 //other function stuff

@@ -27,17 +27,11 @@ double MSE(double e, double a)
 	l = pow(e - a, 2);
 	return l;
 }
-double MSE_grad_w(double e, double a, double x)
+double MSE_grad(double e, double a, double x)
 {
-	double grad_w;
-	grad_w = 2.0*x*(nf.w*x + nf.b - e);
-	return grad_w;
-}
-double MSE_grad_b(double e, double a, double x)
-{
-	double grad_b;
-	grad_b = 2.0*(nf.w*x + nf.b - e);
-	return grad_b;
+	double grad;
+	grad = -2.0*(e - nf.w*x - nf.b);
+	return grad;
 }
 
 //Activation function
@@ -45,6 +39,10 @@ double MSE_grad_b(double e, double a, double x)
 double None(double x)
 {
 	return x;
+}
+double grad(double x)
+{
+	return 1.0;
 }
 //ReLU & RelU gradient
 //ReLU(x) = max(x, 0)
@@ -61,14 +59,6 @@ double ReLU_grad(double x)
 		return 1.0;
 	else
 		return 0.0;
-}
-double Sigmoid(double x)
-{
-	return 1 / (1 + exp(-x));
-}
-double Tanh(double x)
-{
-	return tanh(x);
 }
 //LeakyReLU & LeakyReLU gradient
 //LeakyReLU(x) = max(x, alpha * x)
@@ -87,52 +77,23 @@ double LReLU_grad(double x)
 	else
 		return alpha;
 }
-
-//Gradients
-//dE/dwi = 2(e - a)
-double MSE_grad_w_ReLU(double e, double a, double x)
+//Sigmoid & Sigmoid gradient
+double Sigmoid(double x)
 {
-	if (f(x) > 0)
-		return -2.0*x*(e - a);
-	else
-		return 0.0;
+	return 1 / (1 + exp(-x));
 }
-double MSE_grad_b_ReLU(double e, double a, double x)
+double Sigmoid_grad(double x)
 {
-	if (f(x > 0))
-		return -2.0*(e - a);
-	else
-		return 0.0;
+	return Sigmoid(x)*(1 - Sigmoid(x));
 }
-double MSE_grad_w_LReLU(double e, double a, double x)
+//Tanh & Tanh gradient
+double Tanh(double x)
 {
-	if (f(x) > 0)
-		return -2.0*x*(e - a);
-	else
-		return -2.0*alpha*x*(e - a);
+	return tanh(x);
 }
-double MSE_grad_b_LReLU(double e, double a, double x)
+double Tanh_grad(double x)
 {
-	if (f(x > 0))
-		return -2.0*(e - a);
-	else
-		return -2.0*alpha*(e - a);
-}
-double MSE_grad_w_Sigmoid(double e, double a, double x)
-{
-	return -(e - a)*e*(1 - e)*x;
-}
-double MSE_grad_b_Sigmoid(double e, double a, double x)
-{
-	return -(e - a)*e*(1 - e);
-}
-double MSE_grad_w_Tanh(double e, double a, double x)
-{
-	return -(e - a)*(1 - pow(e, 2))*x;
-}
-double MSE_grad_b_Tanh(double e, double a, double x)
-{
-	return -(e - a)*(1 - pow(e, 2));
+	return 1 - pow(Tanh(x), 2);
 }
 
 //seed random using sec * nsec

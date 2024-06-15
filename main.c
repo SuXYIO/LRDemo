@@ -7,11 +7,14 @@
 #include <string.h>
 #include <stdbool.h>
 
-//weights & biases
+//neuron f()
 neuron nf;
+neuron nfg;
+//training neuron g()
 neuron ng;
 //extern options
 int a_func_num = 0;
+int l_func_num = 0;
 
 int main(int const argc, char* const argv[])
 {
@@ -20,8 +23,8 @@ int main(int const argc, char* const argv[])
 	//seed rand
 	seed = strand();
 	double l = 0.0;
-	double grad_w = 0.0;
-	double grad_b = 0.0;
+	nfg.w = 0.0;
+	nfg.b = 0.0;
 	double eta = 0.001;
 	double l_exp = 0.0001;
 	int batch_size = 256;
@@ -35,7 +38,7 @@ int main(int const argc, char* const argv[])
 	FILE* csvfilep = NULL;
 	//tmp var
 	int o;
-	const char* optstring = "Vts:f:A:b:e:l:vh";
+	const char* optstring = "Vts:f:A:L:b:e:l:vh";
 	while ((o = getopt(argc, argv, optstring)) != -1) {
 		switch (o) {
 			case 'V':
@@ -54,6 +57,9 @@ int main(int const argc, char* const argv[])
 				break;
 			case 'A':
 				a_func_num = atoi(optarg);
+				break;
+			case 'L':
+				l_func_num = atoi(optarg);
 				break;
 			case 'b':
 				batch_size = atoi(optarg);
@@ -118,14 +124,14 @@ int main(int const argc, char* const argv[])
 	if (writetofile == true) {
 		csvfilep = fopen(csvfilename, "w");
 		if (csvfilep == NULL) {
-			printf("%sERROR: error opening file. \n%sFile: %s, from option \'-f\'\n%s", COLOR_ERROR, COLOR_END, csvfilename, COLOR_END);
+			printf("%sERROR: error opening file. \n%s", COLOR_ERROR, COLOR_END);
 			return -1;
 		}
-		fprintf(csvfilep, "f_w,f_b,g_w,g_b,l,grad_w,grad_b\n");
+		fprintf(csvfilep, "f_w,f_b,g_w,g_b,l,nfg.w,nfg.b\n");
 	}
 	//get functions
-	if (getfuncs(a_func_num) == -1) {
-		printf("%sERROR: error activation function. \n%sFrom option \'-A\'\n%s", COLOR_ERROR, COLOR_END, COLOR_END);
+	if (getfuncs() == -1) {
+		printf("%sERROR: error activation or loss function. \n%s", COLOR_ERROR, COLOR_END);
 		return -1;
 	}
 	//count iteration
@@ -135,7 +141,7 @@ int main(int const argc, char* const argv[])
 		if (use_thread == true) {
 			//use muti-thread to calculate batch
 			pthread_t tid[thread_size];
-			void* args[3] = {&l, &grad_w, &grad_b};
+			void* args[3] = {&l, &nfg.w, &nfg.b};
 			for (int i = 0; i < thread_size; i++)
 				pthread_create(&tid[i], NULL, calc_batch, args);
 			for (int i = 0; i < thread_size; i++) {
@@ -143,27 +149,26 @@ int main(int const argc, char* const argv[])
 			}
 		} else if (use_thread == false) {
 			//normal calculate batch
-			void* args[3] = {&l, &grad_w, &grad_b};
-			getfuncs(a_func_num);
+			void* args[3] = {&l, &nfg.w, &nfg.b};
 			for (int i = 0; i < batch_size; i++) {
 				calc_batch(args);
 			}
 		}
 		//calc loss & gradients (average of batch)
 		l /= batch_size;
-		grad_w /= batch_size;
-		grad_b /= batch_size;
+		nfg.w /= batch_size;
+		nfg.b /= batch_size;
 		//update weights & biases
-		nf.w -= eta * grad_w;
-		nf.b -= eta * grad_b;
+		nf.w -= eta * nfg.w;
+		nf.b -= eta * nfg.b;
 		//print results
 		if (writetofile == true)
-			fprintf(csvfilep, "%.*f,%.*f,%.*f,%.*f,%.*f,%.*f,%.*f\n", FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, l, FPP, grad_w, FPP, grad_b);
+			fprintf(csvfilep, "%.*f,%.*f,%.*f,%.*f,%.*f,%.*f,%.*f\n", FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, l, FPP, nfg.w, FPP, nfg.b);
 		if (verbose == true)
-			printf("%siter = %d, nf.w = %.*f, nf.b = %.*f, ng.w = %.*f, ng.b = %.*f, l = %.*f, grad_w = %.*f, grad_b = %.*f; \n%s", COLOR_END, iter, FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, l, FPP, grad_w, FPP, grad_b, COLOR_END);
+			printf("%siter = %d, nf.w = %.*f, nf.b = %.*f, ng.w = %.*f, ng.b = %.*f, l = %.*f, nfg.w = %.*f, nfg.b = %.*f; \n%s", COLOR_END, iter, FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, l, FPP, nfg.w, FPP, nfg.b, COLOR_END);
 		//check if gradient explosion
-		if (isfinite(l) != true || isfinite(grad_w) != true || isfinite(grad_b) != true) {
-			printf("%sERROR: l or grad_w or grad_b not finite, probably gradient explosion. \n%siter = %d, \nnf.w = %.*f, nf.b = %.*f, \nng.w = %.*f, ng.b = %.*f, \neta = %.*f, batch_size = %d, \nl = %.*f, l_exp = %.*f\n%s", COLOR_ERROR, COLOR_END, iter, FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, eta, batch_size, FPP, l, FPP, l_exp, COLOR_END);
+		if (isfinite(l) != true || isfinite(nfg.w) != true || isfinite(nfg.b) != true) {
+			printf("%sERROR: l or nfg.w or nfg.b not finite, probably gradient explosion. \n%siter = %d, \nnf.w = %.*f, nf.b = %.*f, \nng.w = %.*f, ng.b = %.*f, \neta = %.*f, batch_size = %d, \nl = %.*f, l_exp = %.*f\n%s", COLOR_ERROR, COLOR_END, iter, FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, eta, batch_size, FPP, l, FPP, l_exp, COLOR_END);
 			if (writetofile == true)
 				fclose(csvfilep);
 			return -1;
