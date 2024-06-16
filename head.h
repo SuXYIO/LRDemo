@@ -15,6 +15,7 @@
 	//Float Precision for Print: how many digits to print after float decimal point
 		#define FPP 4
 	//ANSI color
+		#define COLOR_NORM "\033[0m"
 		#define COLOR_SUCC "\033[32m"
 		#define COLOR_WARN "\033[33m"
 		#define COLOR_ERROR "\033[31m"
@@ -43,6 +44,7 @@
 		double Tanh_grad(double x);
 		int strand(void);
 		double rand_nml(double mean, double stddev);
+		double rand_nmlstd(void);
 	//func.c
 		void* calc_batch(void* args);
 		int getfuncs(void);

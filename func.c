@@ -33,7 +33,7 @@ void* calc_batch(void* args)
 	double* pgrad_w = arg[1];
 	double* pgrad_b = arg[2];
 	//calc
-	double x = rand_nml(1.0, 1.0);
+	double x = rand_nmlstd();
 	double y_f = a_func(f(x));
 	double y_g = a_func(g(x));
 	//pass results

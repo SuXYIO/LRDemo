@@ -79,16 +79,17 @@ int main(int const argc, char* const argv[])
 				return 0;
 				break;
 			case '?':
-				printf("%sError: invalid option: '%c'. %s\nUse \"./LR.out -h\" for help. \n%s", COLOR_ERROR, optopt, COLOR_END, COLOR_END);
+				printf("%sError: invalid option: '%c'. %s\nUse \"./LR.out -h\" for help. \n%s", COLOR_ERROR, optopt, COLOR_NORM, COLOR_END);
 				return -1;
 				break;
 		}
 	}
 	//init weights and biases with nml distro
-	nf.w = rand_nml(0.0, 1.0);
-	nf.b = rand_nml(0.0, 1.0);
-	ng.w = rand_nml(0.0, 1.0);
-	ng.b = rand_nml(0.0, 1.0);
+	double (*randfunc)(void) = rand_nmlstd;
+	nf.w = randfunc();
+	nf.b = randfunc();
+	ng.w = randfunc();
+	ng.b = randfunc();
 	//record initial f_w & f_b for future use
 	double nf_w_init = nf.w;
 	double nf_b_init = nf.b;
@@ -116,7 +117,7 @@ int main(int const argc, char* const argv[])
 			return 0;
 		} else {
 			//error
-			printf("%sERROR: return of isusablefile() is invalid. \n%sReturn of isusablefile() = %d\n%s", COLOR_ERROR, COLOR_END, usable, COLOR_END);
+			printf("%sERROR: return of isusablefile() is invalid. \n%s", COLOR_ERROR, COLOR_END);
 			return -1;
 		}
 	}
@@ -165,17 +166,17 @@ int main(int const argc, char* const argv[])
 		if (writetofile == true)
 			fprintf(csvfilep, "%.*f,%.*f,%.*f,%.*f,%.*f,%.*f,%.*f\n", FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, l, FPP, nfg.w, FPP, nfg.b);
 		if (verbose == true)
-			printf("%siter = %d, nf.w = %.*f, nf.b = %.*f, ng.w = %.*f, ng.b = %.*f, l = %.*f, nfg.w = %.*f, nfg.b = %.*f; \n%s", COLOR_END, iter, FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, l, FPP, nfg.w, FPP, nfg.b, COLOR_END);
+			printf("%siter = %d, nf.w = %.*f, nf.b = %.*f, ng.w = %.*f, ng.b = %.*f, l = %.*f, nfg.w = %.*f, nfg.b = %.*f; \n%s", COLOR_NORM, iter, FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, l, FPP, nfg.w, FPP, nfg.b, COLOR_END);
 		//check if gradient explosion
 		if (isfinite(l) != true || isfinite(nfg.w) != true || isfinite(nfg.b) != true) {
-			printf("%sERROR: l or nfg.w or nfg.b not finite, probably gradient explosion. \n%siter = %d, \nnf.w = %.*f, nf.b = %.*f, \nng.w = %.*f, ng.b = %.*f, \neta = %.*f, batch_size = %d, \nl = %.*f, l_exp = %.*f\n%s", COLOR_ERROR, COLOR_END, iter, FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, eta, batch_size, FPP, l, FPP, l_exp, COLOR_END);
+			printf("%sERROR: l or nfg.w or nfg.b not finite, probably gradient explosion. \n%sseed = %d, \niter = %d, \nnf.w = %.*f, nf.b = %.*f, \nng.w = %.*f, ng.b = %.*f, \neta = %.*f, batch_size = %d, \nl = %.*f, l_exp = %.*f\n%s", COLOR_ERROR, COLOR_NORM, seed, iter, FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, eta, batch_size, FPP, l, FPP, l_exp, COLOR_END);
 			if (writetofile == true)
 				fclose(csvfilep);
 			return -1;
 		}
 		iter++;
 	} while (l >= l_exp);
-	printf("%sSUCC: l >= l_exp. \n%sseed = %d, \niter = %d, \nnf.w_init = %.*f, nf.b_init = %.*f, \nnf.w = %.*f, nf.b = %.*f, \nng.w = %.*f, ng.b = %.*f, \neta = %.*f, batch_size = %d, \nl = %.*f, l_exp = %.*f\n%s", COLOR_SUCC, COLOR_END, seed, iter, FPP, nf_w_init, FPP, nf_b_init, FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, eta, batch_size, FPP, l, FPP, l_exp, COLOR_END);
+	printf("%sSUCC: l >= l_exp. \n%sseed = %d, \niter = %d, \nnf.w_init = %.*f, nf.b_init = %.*f, \nnf.w = %.*f, nf.b = %.*f, \nng.w = %.*f, ng.b = %.*f, \neta = %.*f, batch_size = %d, \nl = %.*f, l_exp = %.*f\n%s", COLOR_SUCC, COLOR_NORM, seed, iter, FPP, nf_w_init, FPP, nf_b_init, FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, eta, batch_size, FPP, l, FPP, l_exp, COLOR_END);
 	if (writetofile == true)
 		fclose(csvfilep);
 	return 0;

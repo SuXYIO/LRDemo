@@ -132,3 +132,7 @@ double rand_nml(double mean, double stddev)
 	r = box_muller();
 	return r * stddev + mean;
 }
+double rand_nmlstd(void)
+{
+	return rand_nml(0.0, 1.0);
+}
