@@ -25,6 +25,9 @@
 		typedef struct {
 			double w;
 			double b;
+			double l;
+			double wg;
+			double bg;
 		} neuron;
 //functions
 	//neuron.c
@@ -47,6 +50,7 @@
 		double rand_nmlstd(void);
 	//func.c
 		void* calc_batch(void* args);
+		int init_n(void);
 		int getfuncs(void);
 		int isusablefile(char* filename);
 		int printversion(void);

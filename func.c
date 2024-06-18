@@ -3,11 +3,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-//get weights & biases
-extern double f_w;
-extern double f_b;
-extern double g_w;
-extern double g_b;
+//get neurons
+neuron nf;
+neuron ng;
 //extern options
 extern int a_func_num;
 extern int l_func_num;
@@ -27,20 +25,31 @@ double (*lgrad_func)(double, double) = NULL;
 //calculate batch thread function
 void* calc_batch(void* args)
 {
-	//get args
-	void** arg = (void**) args;
-	double* pl = arg[0];
-	double* pgrad_w = arg[1];
-	double* pgrad_b = arg[2];
 	//calc
 	double x = rand_nmlstd();
 	double y_f = a_func(f(x));
 	double y_g = a_func(g(x));
 	//pass results
-	*pl += l_func(y_g, y_f);
-	*pgrad_w += lgrad_func(y_g, y_f) * agrad_func(x) * x;
-	*pgrad_b += lgrad_func(y_g, y_f) * agrad_func(x);
+	nf.l += l_func(y_g, y_f);
+	nf.wg += lgrad_func(y_g, y_f) * agrad_func(x) * x;
+	nf.bg += lgrad_func(y_g, y_f) * agrad_func(x);
 	return NULL;
+}
+
+//init neurons
+int init_n(void)
+{
+	double (*randfunc)(void) = rand_nmlstd;
+	//neuron f
+	nf.w = randfunc();
+	nf.b = randfunc();
+	nf.l = 0.0;
+	nf.wg = 0.0;
+	nf.bg = 0.0;
+	//neuron g
+	ng.w = randfunc();
+	ng.b = randfunc();
+	return 0;
 }
 
 //get function pointers
