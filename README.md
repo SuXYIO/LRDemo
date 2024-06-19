@@ -46,5 +46,5 @@ Random algorithm: `Box-muller normal distro`
 **g(x)**: Data function, for generating training data  
 
 ## Purpose
-A project to help improve C programming skills & experiment with and understand MLPs better.  
+A project to help improve C programming skills and understand neural networks better.  
 
