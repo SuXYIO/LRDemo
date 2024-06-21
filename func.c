@@ -1,7 +1,7 @@
 #include "head.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
+#include <string.h>
 
 //get neurons
 neuron nf;
@@ -127,7 +127,7 @@ double (*get_lgrad_func(int funcnum))(double, double)
 
 //other function stuff
 //test file for writing
-int isusablefile(char* filename)
+bool isusablefile(char* const filename)
 {
 	FILE* filep = fopen(filename, "r");
 	if (filep == NULL) {
@@ -163,33 +163,11 @@ int isusablefile(char* filename)
 	}
 	return -1;
 }
-//print version
-int printversion(void)
+bool isfileexist(char* const filename)
 {
-	printf("Name: LR\nVersion: %s\n", VER);
-	return 0;
-}
-//show help (manual) page
-int manualpage(void)
-{
-	char const manual_path[] = "./manual.txt";
-	char const less_cmd[] = "less -R ";
-	char cmd[sizeof(less_cmd) + sizeof(manual_path)] = "";
-	sprintf(cmd, "%s%s", less_cmd, manual_path);
-	int less_err = system(cmd);
-	if (less_err != 0) {
-		// less error
-		FILE *file;
-		char ch;
-		file = fopen("example.txt", "r");
-		if (file == NULL) {
-			printf("%sError opening ./manual.txt. %sCheck if manual.txt exists. \n%s", COLOR_ERROR, COLOR_END, COLOR_END);
-			return -1;
-		}
-		while ((ch = fgetc(file)) != EOF) {
-			printf("%c", ch);
-		}
-		fclose(file);
-	}
-	return 0;
+	FILE* filep = fopen(filename, "r");
+	if (filep == NULL)
+		return false;
+	fclose(filep);
+	return true;
 }

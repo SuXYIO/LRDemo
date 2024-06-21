@@ -6,7 +6,6 @@
 //get weights & biases
 extern neuron nf;
 extern neuron ng;
-//Functions
 
 double f(double x)
 {

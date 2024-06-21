@@ -1,0 +1,3 @@
+! [cmd]
+	Execute shell commands. 
+	cmd is command name. 

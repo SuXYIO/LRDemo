@@ -1,0 +1,3 @@
+h/help/man [entry_name]
+	Help (manual) page, prints manual for entry, prints menu for LR if entry_name empty. 
+	entry_name is the command name. 
