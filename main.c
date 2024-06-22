@@ -31,7 +31,8 @@ int main(int const argc, char* const argv[])
 		//get line
 		printf(PROMPT);
 		fflush(stdout);
-		fgets(line, STR_BUFSIZE, stdin);
+		linep = inputline();
+		strcpy(line, linep);
 		char* tmp = NULL;
 		char* cmd = NULL;
 		char* opts[MAXARGS] = {NULL};
@@ -53,7 +54,7 @@ int main(int const argc, char* const argv[])
 			if (line[0] == '!') {
 				system(line + 1);
 			} else
-				printf("%sFAIL: unknown command. \n%s", COLOR_FAIL, COLOR_END);
+				printf("%sFAIL: unknown command: \"%s\". \n%s", COLOR_FAIL, cmd, COLOR_END);
 	} while (quit == false);
 	return 0;
 }

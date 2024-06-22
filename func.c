@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <termios.h>
 
 //get neurons
 neuron nf;
@@ -170,4 +172,63 @@ bool isfileexist(char* const filename)
 		return false;
 	fclose(filep);
 	return true;
+}
+char* inputline(void)
+{
+	static char input[STR_BUFSIZE] = "\0";
+	for (int i = 0; i < STR_BUFSIZE; i++)
+		input[i] = '\0';
+	struct termios oldt, newt;
+	tcgetattr(STDIN_FILENO, &oldt);
+	newt = oldt;
+	newt.c_lflag &= ~(ICANON | ECHO | ECHOE);
+	tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+	//init
+	//distance to prompt
+	int dp = 0;
+	int i = 0;
+	while (true) {
+		char c = '\0';
+		read(STDIN_FILENO, &c, 1);
+		if (c == 127) {
+			if (dp > 0) {
+				//backspace
+				printf("\b \b");
+				fflush(stdout);
+				if (i > 0)
+					input[--i] = '\0';
+				else if (i == 0)
+					input[i] = '\0';
+				dp--;
+			}
+		} else if (c == '\033') {
+			//escape char
+			getchar();
+			c = getchar();
+			if (c == 'D' && dp > 0) {
+				//left arrow key
+				printf("\b");
+				fflush(stdout);
+				i--;
+				dp--;
+			}
+		} else if (c == ENDLINE) {
+			//endline char
+			printf("\n");
+			fflush(stdout);
+			break;
+		} else {
+			//normal char
+			printf("%c", c);
+			fflush(stdout);
+			input[i++] = c;
+			dp++;
+		}
+		if (i < 0)
+			i = 0;
+		if (dp < 0)
+			dp = 0;
+	}
+	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+	return input;
 }

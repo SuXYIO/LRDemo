@@ -16,6 +16,7 @@
 		#define STR_BUFSIZE 256
 	//Interface stuff
 		#define PROMPT "> "
+		#define ENDLINE '\n'
 		#define MAXARGS 64
 		#define CMDSEP " \t\n"
 	//Float Precision for Print: how many digits to print after float decimal point
@@ -60,6 +61,7 @@
 		int getfuncs(void);
 		bool isusablefile(char* const filename);
 		bool isfileexist(char* const filename);
+		char* inputline(void);
 	//cmd.c
 		int auto_train(int const argc, char* const argv[]);
 		int printversion(void);
