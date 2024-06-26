@@ -29,9 +29,7 @@ int main(int const argc, char* const argv[])
 		char line[STR_BUFSIZE] = "\0";
 		char* linep = line;
 		//get line
-		printf(PROMPT);
-		fflush(stdout);
-		linep = inputline();
+		linep = inputline(PROMPT);
 		strcpy(line, linep);
 		char* tmp = NULL;
 		char* cmd = NULL;

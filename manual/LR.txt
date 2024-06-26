@@ -1,6 +1,5 @@
 NAME
 	LRDemo (Linear Regression Demo)
-	Version 1.0.0
 SYNOPSIS
 	./LR.out [args]
 DESCRIPTION

@@ -15,7 +15,7 @@ make
 ```
 ### Windows:
 Not supported yet.  
-With versions including and after commit `7bbfc08c43ca8c24be9d7da5e21884a420c4fa7a`, the program uses POSIX libs, which vanilla Windows doesn't support. The versions before might have a chance of working on Windows.  
+The program uses POSIX libs, which vanilla Windows doesn't support. The versions before might have a chance of working on Windows.  
 Might work if using methods like MinGW to use POSIX standards on Windows.  
 
 ## Usage

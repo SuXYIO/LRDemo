@@ -25,7 +25,7 @@ extern char csvfilename[STR_BUFSIZE];
 extern FILE* csvfilep;
 
 //auto training
-int auto_train(int const argc, char* const argv[])
+int auto_train(int const argc, char** const argv)
 {
 	//init
 	seed = strand();

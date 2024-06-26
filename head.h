@@ -9,7 +9,7 @@
 #include <stdbool.h>
 //defines
 	//Version stuff
-		#define VER "1.0.0"
+		#define VER "2.0.0"
 	//Max number of threads to run
 		#define MAX_THREADS 1024
 	//Buffer size for strings
@@ -38,32 +38,32 @@
 		} neuron;
 //functions
 	//neuron.c
-		double f(double x);
-		double g(double x);
-		double MSE(double e, double a);
-		double MSE_grad(double e, double a);
-		double None(double x);
-		double grad(double x);
-		double ReLU(double x);
-		double ReLU_grad(double x);
-		double LReLU(double x);
-		double LReLU_grad(double x);
-		double Sigmoid(double x);
-		double Sigmoid_grad(double x);
-		double Tanh(double x);
-		double Tanh_grad(double x);
+		double f(double);
+		double g(double);
+		double MSE(double, double);
+		double MSE_grad(double, double);
+		double None(double);
+		double grad(double);
+		double ReLU(double);
+		double ReLU_grad(double);
+		double LReLU(double);
+		double LReLU_grad(double);
+		double Sigmoid(double);
+		double Sigmoid_grad(double);
+		double Tanh(double);
+		double Tanh_grad(double);
 		int strand(void);
-		double rand_nml(double mean, double stddev);
+		double rand_nml(double, double);
 		double rand_nmlstd(void);
 	//func.c
-		void* calc_batch(void* args);
+		void* calc_batch(void*);
 		int init_n(void);
 		int getfuncs(void);
-		bool isusablefile(char* const filename);
-		bool isfileexist(char* const filename);
-		char* inputline(void);
+		bool isusablefile(char* const);
+		bool isfileexist(char* const);
+		char* inputline(char*);
 	//cmd.c
-		int auto_train(int const argc, char* const argv[]);
+		int auto_train(int, char**);
 		int printversion(void);
-		int manualpage(char* entry_name);
+		int manualpage(char*);
 #endif

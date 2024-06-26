@@ -173,61 +173,82 @@ bool isfileexist(char* const filename)
 	fclose(filep);
 	return true;
 }
-char* inputline(void)
+char* inputline(char* prompt)
 {
-	static char input[STR_BUFSIZE] = "\0";
-	for (int i = 0; i < STR_BUFSIZE; i++)
-		input[i] = '\0';
 	struct termios oldt, newt;
 	tcgetattr(STDIN_FILENO, &oldt);
 	newt = oldt;
 	newt.c_lflag &= ~(ICANON | ECHO | ECHOE);
 	tcsetattr(STDIN_FILENO, TCSANOW, &newt);
 	//init
+	static char input[STR_BUFSIZE] = "\0";
+	for (int i = 0; i < STR_BUFSIZE; i++)
+		input[i] = '\0';
 	//distance to prompt
 	int dp = 0;
 	int i = 0;
+	int len = 0;
+	printf("%s", prompt);
+	fflush(stdout);
 	while (true) {
 		char c = '\0';
 		read(STDIN_FILENO, &c, 1);
-		if (c == 127) {
+		if (c == '\177') {
 			if (dp > 0) {
 				//backspace
-				printf("\b \b");
-				fflush(stdout);
-				if (i > 0)
-					input[--i] = '\0';
-				else if (i == 0)
-					input[i] = '\0';
+				memmove(input + dp - 1, input + dp, len - dp);
+				input[len - 1] = '\0';
+				i--;
 				dp--;
+				len--;
 			}
 		} else if (c == '\033') {
 			//escape char
 			getchar();
 			c = getchar();
-			if (c == 'D' && dp > 0) {
-				//left arrow key
-				printf("\b");
-				fflush(stdout);
-				i--;
-				dp--;
+			if (c == 'A')
+				//up arrow
+				;
+			else if (c == 'B')
+				//down arrow
+				;
+			else if (c == 'C') {
+				//right arrow
+				if (dp < i) {
+					i++;
+					dp++;
+				}
+			} else if (c == 'D') {
+				//left arrow
+				if (dp > 0) {
+					i--;
+					dp--;
+				}
 			}
 		} else if (c == ENDLINE) {
 			//endline char
+			input[i++] = '\n';
 			printf("\n");
-			fflush(stdout);
 			break;
 		} else {
 			//normal char
-			printf("%c", c);
-			fflush(stdout);
-			input[i++] = c;
+			if (dp < i) {
+				memmove(input + dp + 1, input + dp, len - dp);
+			} else 
+				input[i++] = c;
 			dp++;
+			len++;
 		}
+		printf("\r%s%s", prompt, input);
+		for (int j = 0; j < len - dp; j++)
+			printf("\b");
+		fflush(stdout);
 		if (i < 0)
 			i = 0;
 		if (dp < 0)
 			dp = 0;
+		if (len < 0)
+			len = 0;
 	}
 	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
 	return input;
