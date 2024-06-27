@@ -178,7 +178,7 @@ char* inputline(char* prompt)
 	struct termios oldt, newt;
 	tcgetattr(STDIN_FILENO, &oldt);
 	newt = oldt;
-	newt.c_lflag &= ~(ICANON | ECHO | ECHOE);
+	newt.c_lflag &= ~(ICANON | ECHO);
 	tcsetattr(STDIN_FILENO, TCSANOW, &newt);
 	//init
 	static char input[STR_BUFSIZE] = "\0";
@@ -186,7 +186,6 @@ char* inputline(char* prompt)
 		input[i] = '\0';
 	//distance to prompt
 	int dp = 0;
-	int i = 0;
 	int len = 0;
 	printf("%s", prompt);
 	fflush(stdout);
@@ -197,10 +196,8 @@ char* inputline(char* prompt)
 			if (dp > 0) {
 				//backspace
 				memmove(input + dp - 1, input + dp, len - dp);
-				input[len - 1] = '\0';
-				i--;
+				input[--len] = '\0';
 				dp--;
-				len--;
 			}
 		} else if (c == '\033') {
 			//escape char
@@ -214,41 +211,37 @@ char* inputline(char* prompt)
 				;
 			else if (c == 'C') {
 				//right arrow
-				if (dp < i) {
-					i++;
+				if (dp < len) {
 					dp++;
 				}
 			} else if (c == 'D') {
 				//left arrow
 				if (dp > 0) {
-					i--;
 					dp--;
 				}
 			}
 		} else if (c == ENDLINE) {
 			//endline char
-			input[i++] = '\n';
 			printf("\n");
 			break;
 		} else {
 			//normal char
-			if (dp < i) {
+			if (dp < len) {
 				memmove(input + dp + 1, input + dp, len - dp);
+				input[dp] = c;
 			} else 
-				input[i++] = c;
+				input[dp] = c;
 			dp++;
 			len++;
 		}
-		printf("\r%s%s", prompt, input);
-		for (int j = 0; j < len - dp; j++)
-			printf("\b");
-		fflush(stdout);
-		if (i < 0)
-			i = 0;
 		if (dp < 0)
 			dp = 0;
 		if (len < 0)
 			len = 0;
+		printf("\033[2K\r%s%s", prompt, input);
+		for (int j = 0; j < len - dp; j++)
+			printf("\b");
+		fflush(stdout);
 	}
 	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
 	return input;
