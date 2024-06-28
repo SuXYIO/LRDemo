@@ -38,7 +38,6 @@ More info in mutiplot.py's first mutiline comment.
 
 ## Technical Details
 ### Algorithms
-Loss function: `MSE`  
 Regression algorithm: `Gradient decent`  
 Random algorithm: `Box-muller normal distro`  
 ### Functions
