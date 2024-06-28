@@ -202,7 +202,7 @@ int printversion(void)
 	return 0;
 }
 //show help (manual) page
-int manualpage(char* entry_name)
+int manpage(char* entry_name)
 {
 	if (entry_name == NULL)
 		entry_name = "LR";

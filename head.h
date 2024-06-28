@@ -61,9 +61,10 @@
 		int getfuncs(void);
 		bool isusablefile(char* const);
 		bool isfileexist(char* const);
+		bool msc(char*, int, ...);
 		char* inputline(char*);
 	//cmd.c
 		int auto_train(int, char**);
 		int printversion(void);
-		int manualpage(char*);
+		int manpage(char*);
 #endif

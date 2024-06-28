@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 #include <unistd.h>
 #include <termios.h>
 
@@ -172,6 +173,20 @@ bool isfileexist(char* const filename)
 		return false;
 	fclose(filep);
 	return true;
+}
+//mutiple string cmpare
+bool msc(char* str, int strsc, ...)
+{
+	bool same = false;
+	va_list strs;
+	va_start(strs, strsc);
+	for (int i = 0; i < strsc; i++)
+		if (strcmp(str, va_arg(strs, char*)) == 0) {
+			same = true;
+			break;
+		}
+	va_end(strs);
+	return same;
 }
 char* inputline(char* prompt)
 {

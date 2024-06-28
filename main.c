@@ -42,11 +42,11 @@ int main(int const argc, char* const argv[])
 			opts[i++] = tmp = strsep(&linep, CMDSEP);
 		while (tmp != NULL && i < MAXARGS);
 		//execute command
-		if (strcmp(cmd, "help") == 0 || strcmp(cmd, "h") == 0 || strcmp(cmd, "man") == 0)
-			manualpage(opts[0]);
-		else if (strcmp(cmd, "version") == 0 || strcmp(cmd, "v") == 0 || strcmp(cmd, "ver") == 0)
+		if (msc(cmd, 3, "h", "help", "man") == true)
+			manpage(opts[0]);
+		else if (msc(cmd, 3, "v", "ver", "ver"))
 			printversion();
-		else if (strcmp(cmd, "quit") == 0 || strcmp(cmd, "q") == 0 || strcmp(cmd, "exit") == 0)
+		else if (msc(cmd, 3, "q", "quit", "exit"))
 			quit = true;
 		else
 			if (line[0] == '!') {
