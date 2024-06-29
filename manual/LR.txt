@@ -5,6 +5,10 @@ SYNOPSIS
 DESCRIPTION
 	Linear regression demo made with C standard libs. 
 COMMANDS
+	i/init [args]
+		Init values for neuron. 
+	sr/seedrand [args]
+		Seed random. 
 	tr/train [args]
 		Auto training. 
 	! [cmd]
@@ -15,6 +19,6 @@ COMMANDS
 		Print version info. 
 	q/quit/exit
 		Quits program. 
-AUTHOR
+DEVELOPER
 	SuXYIO (https://github.com/SuXYIO)
 

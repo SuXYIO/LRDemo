@@ -14,10 +14,10 @@ extern int a_func_num;
 extern int l_func_num;
 
 //declare getfunc functions
-double (*get_a_func(int funcnum))(double);
-double (*get_l_func(int funcnum))(double, double);
-double (*get_agrad_func(int funcnum))(double);
-double (*get_lgrad_func(int funcnum))(double, double);
+double (*get_a_func(int))(double);
+double (*get_l_func(int))(double, double);
+double (*get_agrad_func(int))(double);
+double (*get_lgrad_func(int))(double, double);
 
 //function pointers
 double (*a_func)(double) = NULL;
@@ -37,22 +37,6 @@ void* calc_batch(void* args)
 	nf.wg += lgrad_func(y_g, y_f) * agrad_func(x) * x;
 	nf.bg += lgrad_func(y_g, y_f) * agrad_func(x);
 	return NULL;
-}
-
-//init neurons
-int init_n(void)
-{
-	double (*randfunc)(void) = rand_nmlstd;
-	//neuron f
-	nf.w = randfunc();
-	nf.b = randfunc();
-	nf.l = 0.0;
-	nf.wg = 0.0;
-	nf.bg = 0.0;
-	//neuron g
-	ng.w = randfunc();
-	ng.b = randfunc();
-	return 0;
 }
 
 //get function pointers

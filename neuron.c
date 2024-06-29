@@ -135,3 +135,9 @@ double rand_nmlstd(void)
 {
 	return rand_nml(0.0, 1.0);
 }
+
+//All to 0.0 init
+double r0(void)
+{
+	return 0.0;
+}

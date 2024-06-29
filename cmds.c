@@ -14,24 +14,121 @@ neuron ng;
 extern int a_func_num;
 extern int l_func_num;
 extern int seed;
-extern double eta;
-extern double l_exp;
-extern int batch_size;
-extern int thread_size;
-extern bool verbose;
-extern bool use_thread;
-extern bool writetofile;
-extern char csvfilename[STR_BUFSIZE];
-extern FILE* csvfilep;
+
+//init neurons
+int init(int const argc, char** const argv)
+{
+	bool i_f = true;
+	bool i_g = true;
+	double (*ifunc)(void) = rand_nmlstd;
+	//tmp var
+	int o = '?';
+	int tmp = 1;
+	const char* optstring = "n:m:";
+	while ((o = getopt(argc, argv, optstring)) != -1) {
+		switch (o) {
+			case 'n':
+				if (optarg == NULL) {
+					printf("%sError: option '-%c' requires an argument. %s\nUse \"h i\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
+					return -1;
+				}
+				if (optarg[0] == 'a') {
+					i_f = true;
+					i_g = true;
+				} else if (optarg[0] == 'f')
+					i_f = true;
+				else if (optarg[0] == 'g')
+					i_g = true;
+				else {
+					printf("%sError: invalid option: '-%c %s'. %s\nUse \"h i\" for help. \n%s", COLOR_FAIL, o, optarg, COLOR_NORM, COLOR_END);
+					return -1;
+				}
+				break;
+			case 'm':
+				if (optarg == NULL) {
+					printf("%sError: option '-%c' requires an argument. %s\nUse \"h i\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
+					return -1;
+				}
+				tmp = atoi(optarg);
+				if (tmp == 0)
+					ifunc = r0;
+				else if (tmp == 1)
+					ifunc = rand_nmlstd;
+				else {
+					printf("%sError: invalid option: '-%c %s'. %s\nUse \"h i\" for help. \n%s", COLOR_FAIL, o, optarg, COLOR_NORM, COLOR_END);
+					return -1;
+				}
+				break;
+			case '?':
+				printf("%sError: invalid option: '-%c'. %s\nUse \"h i\" for help. \n%s", COLOR_FAIL, optopt, COLOR_NORM, COLOR_END);
+				return -1;
+				break;
+			default:
+				printf("%sError: unknown option: '-%c'. %s\nUse \"h i\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
+				return -1;
+		}
+	}
+	if (i_f == true) {
+		//neuron f
+		nf.w = ifunc();
+		nf.b = ifunc();
+		nf.l = 0.0;
+		nf.wg = 0.0;
+		nf.bg = 0.0;
+	}
+	if (i_g == true) {
+		//neuron g
+		ng.w = ifunc();
+		ng.b = ifunc();
+	}
+	return 0;
+}
+
+//seed random
+int seedrand(int const argc, char** const argv)
+{
+	//tmp var
+	int o = '?';
+	const char* optstring = "s:";
+	while ((o = getopt(argc, argv, optstring)) != -1) {
+		switch (o) {
+			case 's':
+				if (optarg == NULL) {
+					printf("%sError: option '-%c' requires an argument. %s\nUse \"h sr\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
+					return -1;
+				}
+				srand(atoi(optarg));
+				seed = atoi(optarg);
+				return 0;
+				break;
+			case '?':
+				printf("%sError: invalid option: '-%c'. %s\nUse \"h sr\" for help. \n%s", COLOR_FAIL, optopt, COLOR_NORM, COLOR_END);
+				return -1;
+				break;
+			default:
+				printf("%sError: unknown option: '-%c'. %s\nUse \"h sr\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
+				return -1;
+		}
+	}
+	seed = strand();
+	return 0;
+}
 
 //auto training
-int auto_train(int const argc, char** const argv)
+int train(int const argc, char** const argv)
 {
-	//init
-	seed = strand();
+	double eta = 0.001;
+	double l_exp = 0.0001;
+	int batch_size = 256;
+	int thread_size = 0;
+	bool verbose = false;
+	bool use_thread = false;
+	bool writetofile = false;
+	char csvfilename[STR_BUFSIZE];
+	FILE* csvfilep = NULL;
 	//tmp var
-	int o;
-	const char* optstring = "Vts:f:A:L:b:e:l:vh";
+	int o = '?';
+	const char* optstring = "Vtf:A:L:b:e:l:";
 	while ((o = getopt(argc, argv, optstring)) != -1) {
 		switch (o) {
 			case 'V':
@@ -40,37 +137,58 @@ int auto_train(int const argc, char** const argv)
 			case 't':
 				use_thread = true;
 				break;
-			case 's':
-				seed = atoi(optarg);
-				srand(atoi(optarg));
-				break;
 			case 'f':
+				if (optarg == NULL) {
+					printf("%sError: option '-%c' requires an argument. %s\nUse \"h tr\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
+					return -1;
+				}
 				writetofile = true;
 				strcpy(csvfilename, optarg);
 				break;
 			case 'A':
+				if (optarg == NULL) {
+					printf("%sError: option '-%c' requires an argument. %s\nUse \"h tr\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
+					return -1;
+				}
 				a_func_num = atoi(optarg);
 				break;
 			case 'L':
+				if (optarg == NULL) {
+					printf("%sError: option '-%c' requires an argument. %s\nUse \"h tr\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
+					return -1;
+				}
 				l_func_num = atoi(optarg);
 				break;
 			case 'b':
+				if (optarg == NULL) {
+					printf("%sError: option '-%c' requires an argument. %s\nUse \"h tr\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
+					return -1;
+				}
 				batch_size = atoi(optarg);
 				break;
 			case 'e':
+				if (optarg == NULL) {
+					printf("%sError: option '-%c' requires an argument. %s\nUse \"h tr\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
+					return -1;
+				}
 				eta = atof(optarg);
 				break;
 			case 'l':
+				if (optarg == NULL) {
+					printf("%sError: option '-%c' requires an argument. %s\nUse \"h tr\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
+					return -1;
+				}
 				l_exp = atof(optarg);
 				break;
 			case '?':
-				printf("%sError: invalid option: '%c'. %s\nUse \"./LR.out -h\" for help. \n%s", COLOR_FAIL, optopt, COLOR_NORM, COLOR_END);
+				printf("%sError: invalid option: '-%c'. %s\nUse \"h tr\" for help. \n%s", COLOR_FAIL, optopt, COLOR_NORM, COLOR_END);
 				return -1;
 				break;
+			default:
+				printf("%sError: unknown option: '-%c'. %s\nUse \"h tr\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
+				return -1;
 		}
 	}
-	//init weights and biases with nml distro
-	init_n();
 	//record initial f_w & f_b for future use
 	double nf_w_init = nf.w;
 	double nf_b_init = nf.b;

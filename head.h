@@ -10,6 +10,8 @@
 //defines
 	//Version stuff
 		#define VER "2.0.0"
+	//path to manual
+		#define MANPATH "./manual/"
 	//Max number of threads to run
 		#define MAX_THREADS 1024
 	//Buffer size for strings
@@ -55,16 +57,18 @@
 		int strand(void);
 		double rand_nml(double, double);
 		double rand_nmlstd(void);
+		double r0(void);
 	//func.c
 		void* calc_batch(void*);
-		int init_n(void);
 		int getfuncs(void);
 		bool isusablefile(char* const);
 		bool isfileexist(char* const);
 		bool msc(char*, int, ...);
 		char* inputline(char*);
 	//cmd.c
-		int auto_train(int, char**);
+		int init(int, char**);
+		int seedrand(int, char**);
+		int train(int, char**);
 		int printversion(void);
 		int manpage(char*);
 #endif

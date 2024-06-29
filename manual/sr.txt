@@ -1,0 +1,5 @@
+sr/seedrand [args]
+	Seed random. 
+	If -s option not enabled, seed using time (up to milisec). 
+	Options: 
+		-s [seed]	Define what seed to use. 
