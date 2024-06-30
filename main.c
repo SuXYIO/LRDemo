@@ -8,8 +8,8 @@ neuron nf;
 //training neuron g()
 neuron ng;
 //extern options
-int a_func_num = 0;
-int l_func_num = 0;
+short a_func_num = 0;
+short l_func_num = 0;
 int seed = 0;
 
 int main(int const argc, char* const argv[])

@@ -10,14 +10,14 @@
 neuron nf;
 neuron ng;
 //extern options
-extern int a_func_num;
-extern int l_func_num;
+extern short a_func_num;
+extern short l_func_num;
 
 //declare getfunc functions
-double (*get_a_func(int))(double);
-double (*get_l_func(int))(double, double);
-double (*get_agrad_func(int))(double);
-double (*get_lgrad_func(int))(double, double);
+double (*get_a_func(short))(double);
+double (*get_l_func(short))(double, double);
+double (*get_agrad_func(short))(double);
+double (*get_lgrad_func(short))(double, double);
 
 //function pointers
 double (*a_func)(double) = NULL;
@@ -58,7 +58,7 @@ int getfuncs(void)
 		return -1;
 	return 0;
 }
-double (*get_a_func(int funcnum))(double)
+double (*get_a_func(short funcnum))(double)
 {
 	double (*func)(double);
 	if (funcnum == 0)
@@ -75,7 +75,7 @@ double (*get_a_func(int funcnum))(double)
 		func = NULL;
 	return func;
 }
-double (*get_l_func(int funcnum))(double, double)
+double (*get_l_func(short funcnum))(double, double)
 {
 	double (*func)(double, double);
 	if (funcnum == 0)
@@ -84,7 +84,7 @@ double (*get_l_func(int funcnum))(double, double)
 		func = NULL;
 	return func;
 }
-double (*get_agrad_func(int funcnum))(double)
+double (*get_agrad_func(short funcnum))(double)
 {
 	double (*func)(double);
 	if (funcnum == 0)
@@ -101,7 +101,7 @@ double (*get_agrad_func(int funcnum))(double)
 		func = NULL;
 	return func;
 }
-double (*get_lgrad_func(int funcnum))(double, double)
+double (*get_lgrad_func(short funcnum))(double, double)
 {
 	double (*func)(double, double);
 	if (funcnum == 0) {
