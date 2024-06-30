@@ -4,7 +4,7 @@
 #include <math.h>
 #include <string.h>
 #include <ctype.h>
-#include <unistd.h>
+#include <getopt.h>
 #include <pthread.h>
 
 //get neurons
@@ -24,14 +24,11 @@ int init(int const argc, char** const argv)
 	//tmp var
 	int o = '?';
 	int tmp = 1;
-	const char* optstring = "n:m:";
-	while ((o = getopt(argc, argv, optstring)) != -1) {
+	optreset = true;
+	optind = 1;
+	while ((o = getopt(argc, argv, "n:m:")) != -1) {
 		switch (o) {
 			case 'n':
-				if (optarg == NULL) {
-					printf("%sError: option '-%c' requires an argument. %s\nUse \"h i\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
-					return -1;
-				}
 				if (optarg[0] == 'a') {
 					i_f = true;
 					i_g = true;
@@ -45,10 +42,6 @@ int init(int const argc, char** const argv)
 				}
 				break;
 			case 'm':
-				if (optarg == NULL) {
-					printf("%sError: option '-%c' requires an argument. %s\nUse \"h i\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
-					return -1;
-				}
 				tmp = atoi(optarg);
 				if (tmp == 0)
 					ifunc = r0;
@@ -89,8 +82,9 @@ int seedrand(int const argc, char** const argv)
 {
 	//tmp var
 	int o = '?';
-	const char* optstring = "s:";
-	while ((o = getopt(argc, argv, optstring)) != -1) {
+	optreset = true;
+	optind = 1;
+	while ((o = getopt(argc, argv, "s:")) != -1) {
 		switch (o) {
 			case 's':
 				if (optarg == NULL) {
@@ -128,8 +122,9 @@ int train(int const argc, char** const argv)
 	FILE* csvfilep = NULL;
 	//tmp var
 	int o = '?';
-	const char* optstring = "Vtf:A:L:b:e:l:";
-	while ((o = getopt(argc, argv, optstring)) != -1) {
+	optreset = true;
+	optind = 1;
+	while ((o = getopt(argc, argv, "Vtf:A:L:b:e:l:")) != -1) {
 		switch (o) {
 			case 'V':
 				verbose = true;
