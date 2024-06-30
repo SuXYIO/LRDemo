@@ -4,65 +4,135 @@
 #include <time.h>
 
 //get weights & biases
-	extern double f_w;
-	extern double f_b;
-	extern double g_w;
-	extern double g_b;
-
+extern neuron nf;
+extern neuron ng;
 //Functions
-double f(double x) {
-	return f_w * x + f_b;
+
+double f(double x)
+{
+	return nf.w * x + nf.b;
 }
-double g(double x) {
-	return g_w * x + g_b;
+double g(double x)
+{
+	return ng.w * x + nf.b;
 }
 
+//Loss function
 //MSE & MSE gradient
-double MSE(double e, double a) {
+//MSE(y, y_pred) = (1/n) * ∑(y - y_pred)^2
+//e: expected; a: actual; 
+double MSE(double e, double a)
+{
 	double l;
 	l = pow(e - a, 2);
 	return l;
 }
-double MSE_grad_w(double e, double x) {
-	double grad_w;
-	grad_w = 2.0*x*(f_w*x + f_b - e);
-	return grad_w;
-}
-double MSE_grad_b(double e, double x) {
-	double grad_b;
-	grad_b = 2.0*(f_w*x + f_b - e);
-	return grad_b;
+double MSE_grad(double e, double a)
+{
+	double grad;
+	grad = -2.0*(e - a);
+	return grad;
 }
 
-//random using time
-int trand(void) {
+//Activation function
+//None
+double None(double x)
+{
+	return x;
+}
+double grad(double x)
+{
+	return 1.0;
+}
+//ReLU & RelU gradient
+//ReLU(x) = max(x, 0)
+double ReLU(double x)
+{
+	if (x >= 0)
+		return x;
+	else
+		return 0.0;
+}
+double ReLU_grad(double x)
+{
+	if (x >= 0)
+		return 1.0;
+	else
+		return 0.0;
+}
+//LeakyReLU & LeakyReLU gradient
+//LeakyReLU(x) = max(x, alpha * x)
+double alpha = 0.01;
+double LReLU(double x)
+{
+	if (x >= alpha * x)
+		return x;
+	else
+		return alpha * x;
+}
+double LReLU_grad(double x)
+{
+	if (x >= alpha * x)
+		return 1;
+	else
+		return alpha;
+}
+//Sigmoid & Sigmoid gradient
+double Sigmoid(double x)
+{
+	return 1 / (1 + exp(-x));
+}
+double Sigmoid_grad(double x)
+{
+	return Sigmoid(x)*(1 - Sigmoid(x));
+}
+//Tanh & Tanh gradient
+double Tanh(double x)
+{
+	return tanh(x);
+}
+double Tanh_grad(double x)
+{
+	return 1 - pow(Tanh(x), 2);
+}
+
+//seed random using sec * nsec
+int strand(void)
+{
 	struct timespec ts;
 	clock_gettime(CLOCK_REALTIME, &ts);
-	int seed = (int) ts.tv_nsec;
+	int seed = ts.tv_nsec * time(NULL);
 	srand(seed);
-	return rand();
+	return seed;
 }
 
 //Normal distro random
-double rand_uniform() {
-    return (double) trand() / RAND_MAX;
+double rand_uniform()
+{
+	return (double) rand() / RAND_MAX;
 }
-double box_muller() {
-    static double r[2];
-    double u1, u2, r1, r2;
-    do {
-        u1 = rand_uniform();
-        u2 = rand_uniform();
-        r1 = 2.0 * u1 - 1.0;
-        r2 = 2.0 * u2 - 1.0;
-    } while (r1 * r1 + r2 * r2 > 1.0);
-    double f = sqrt(-2.0 * log(u1));
-    r[0] = r1 * f;
-    r[1] = r2 * f;
-    return r[0];
+double box_muller()
+{
+	static double r[2];
+	double u1, u2, r1, r2;
+	do {
+		u1 = rand_uniform();
+		u2 = rand_uniform();
+		r1 = 2.0 * u1 - 1.0;
+		r2 = 2.0 * u2 - 1.0;
+	} while (r1 * r1 + r2 * r2 > 1.0);
+	double f = sqrt(-2.0 * log(u1));
+	r[0] = r1 * f;
+	r[1] = r2 * f;
+	return r[0];
 }
-double rand_nml(double mean, double stddev) {
-    double r;
-    r = box_muller();
-    return r * stddev + mean;
+double rand_nml(double mean, double stddev)
+{
+	double r;
+	r = box_muller();
+	return r * stddev + mean;
+}
+double rand_nmlstd(void)
+{
+	return rand_nml(0.0, 1.0);
 }
