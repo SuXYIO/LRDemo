@@ -1,4 +1,4 @@
-#include "head.h"
+#include "main.h"
 #include <math.h>
 #include <stdlib.h>
 #include <time.h>

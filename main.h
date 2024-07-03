@@ -3,8 +3,8 @@
 // Created on 2024.05.18
 
 #pragma once
-#ifndef HEAD_H
-#define HEAD_H
+#ifndef MAIN_H
+#define MAIN_H
 //includes
 #include <stdbool.h>
 //defines
@@ -58,12 +58,16 @@
 		double rand_nml(double, double);
 		double rand_nmlstd(void);
 		double r0(void);
-	//func.c
+	//calcfunc.c
 		void* calc_batch(void*);
 		int getfuncs(void);
+	//isfunc.c
 		bool isusablefile(char* const);
 		bool isfileexist(char* const);
+		bool isfileexist(char* const);
+		bool isemptystr(char* const str);
 		bool msc(char*, int, ...);
+	//iofunc.c
 		char* inputline(char*);
 	//cmd.c
 		int init(int, char**);

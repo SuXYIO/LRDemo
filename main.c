@@ -1,4 +1,4 @@
-#include "head.h"
+#include "main.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -29,6 +29,7 @@ int main(int const argc, char* const argv[])
 		//get line
 		linep = inputline(prompt);
 		strcpy(line, linep);
+		linep = line;
 		int optn = 0;
 		char* opts[MAXARGS] = {NULL};
 		//tokenize
