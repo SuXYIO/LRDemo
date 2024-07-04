@@ -99,9 +99,12 @@ char* inputline(char* prompt)
 			len = 0;
 		if (len == 0)
 			canhist = true;
-		printf("\033[2K\r%s%s", prompt, input);
-		for (int j = 0; j < len - dp; j++)
-			printf("\b");
+		if (dp > len)
+			dp = len;
+		if (dp > 0)
+			printf("\033[M\r%s%s\r%s\033[%iC", prompt, input, prompt, dp);
+		else if (dp == 0)
+			printf("\033[M\r%s%s\r%s", prompt, input, prompt);
 		fflush(stdout);
 	}
 	if (isemptystr(input) == false)
