@@ -9,9 +9,13 @@
 #define BACKSPACE '\177'
 #define ESCSEQCHAR '\033'
 #define BELLCHAR '\a'
+//command hist
+int hn = 0;
+char cmdhist[CMDHISTSIZE][STR_BUFSIZE] = {"\0"};
 //input a line
 char* inputline(char* prompt)
 {
+	//TODO: Fix cmdhist segfault
 	struct termios oldt, newt;
 	tcgetattr(STDIN_FILENO, &oldt);
 	newt = oldt;
@@ -19,7 +23,9 @@ char* inputline(char* prompt)
 	tcsetattr(STDIN_FILENO, TCSANOW, &newt);
 	//init
 	static char input[STR_BUFSIZE] = "\0";
-	static char cmdhist[STR_BUFSIZE] = "\0";
+	//hist selection
+	//0 if not selected
+	int hs = 0;
 	for (int i = 0; i < STR_BUFSIZE; i++)
 		input[i] = '\0';
 	//distance to prompt
@@ -27,7 +33,6 @@ char* inputline(char* prompt)
 	int len = 0;
 	//hist stuff
 	bool canhist = true;
-	bool ishist = false;
 	printf("%s", prompt);
 	fflush(stdout);
 	while (true) {
@@ -46,18 +51,26 @@ char* inputline(char* prompt)
 			c = getchar();
 			if (c == 'A') {
 				//up arrow
-				if (canhist == true && ishist == false) {
-					strcpy(input, cmdhist);
-					ishist = true;
+				if (canhist == true) {
+					hs++;
+					if (hs > hn)
+						hs = hn;
+					strcpy(input, cmdhist[hs - 1]);
 					dp = len = strlen(input);
 				}
 			} else if (c == 'B') {
 				//down arrow
-				if (canhist == true && ishist == true) {
-					for (int i = 0; i < STR_BUFSIZE; i++)
-						input[i] = '\0';
-					ishist = false;
-					dp = len = 0;
+				if (canhist == true && hs != 0) {
+					hs--;
+					if (hs < 0)
+						hs = 0;
+					if (hs != 0) {
+						strcpy(input, cmdhist[hs - 1]);
+						dp = len = strlen(cmdhist[hs - 1]);
+					} else if (hs == 0) {
+						strcpy(input, "\0");
+						dp = len = 0;
+					}
 				}
 			} else if (c == 'C') {
 				//right arrow
@@ -69,12 +82,13 @@ char* inputline(char* prompt)
 				//left arrow
 				if (dp > 0) {
 					dp--;
-					canhist = true;
+					canhist = false;
 				}
 			}
 		} else if (c == ENDLINE) {
 			//endline char
 			printf("\n");
+			input[len] = '\0';
 			break;
 		} else {
 			//normal char
@@ -101,14 +115,26 @@ char* inputline(char* prompt)
 			canhist = true;
 		if (dp > len)
 			dp = len;
+		if (hs > hn)
+			hs = hn;
+		if (hs < 0)
+			hs = 0;
 		if (dp > 0)
 			printf("\033[M\r%s%s\r%s\033[%iC", prompt, input, prompt, dp);
 		else if (dp == 0)
 			printf("\033[M\r%s%s\r%s", prompt, input, prompt);
 		fflush(stdout);
 	}
-	if (isemptystr(input) == false)
-		strcpy(cmdhist, input);
+	if (isemptystr(input) == false) {
+		for (int i = CMDHISTSIZE - 1; i > 0; i--) {
+			if (cmdhist[i] != NULL)
+				strcpy(cmdhist[i], cmdhist[i - 1]);
+		}
+		strcpy(cmdhist[0], input);
+		hn++;
+		if (hn > CMDHISTSIZE)
+			hn = CMDHISTSIZE;
+	}
 	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
 	return input;
 }

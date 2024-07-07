@@ -21,6 +21,7 @@
 		#define ENDLINE '\n'
 		#define MAXARGS 64
 		#define CMDSEP " \t\n"
+		#define CMDHISTSIZE 16
 	//Float Precision for Print: how many digits to print after float decimal point
 		#define FPP 4
 	//ANSI color
