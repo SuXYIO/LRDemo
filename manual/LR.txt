@@ -7,6 +7,10 @@ DESCRIPTION
 COMMANDS
 	i/init [args]
 		Init values for neuron. 
+	p/print [args]
+		Print value. 
+	pn/printneuron [args]
+		Print value for neuron. 
 	sr/seedrand [args]
 		Seed random. 
 	tr/train [args]

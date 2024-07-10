@@ -1,12 +1,19 @@
 #include "main.h"
 #include <stdio.h>
 #include <stdarg.h>
-#include <strings.h>
+#include <string.h>
 
 //other function stuff
 //test file for writing
 bool isusablefile(char* const filename)
 {
+	/*
+	ret: 
+		0: enable overwrite
+		1: forget write to file
+		2: quit
+		-1: error
+	*/
 	FILE* filep = fopen(filename, "r");
 	if (filep == NULL) {
 		//file doesn't exist, probably

@@ -1,24 +1,29 @@
 #include "main.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include <string.h>
 
 //neuron f()
 neuron nf;
-//training neuron g()
+//const neuron g()
 neuron ng;
 //extern options
 short a_func_num = 0;
 short l_func_num = 0;
 int seed = 0;
+int ret = 0;
 
+char line[STR_BUFSIZE] = "\0";
+int optn = 0;
+char* opts[MAXARGS] = {"\0"};
 int main(int const argc, char* const argv[])
 {
 	seed = strand();
 	bool quit = false;
-	int ret = 0;
+	for (int i = 0; i < MAXARGS; i++)
+		opts[i] = malloc(STR_BUFSIZE * sizeof(char));
 	do {
-		char line[STR_BUFSIZE] = "\0";
 		char* linep = line;
 		char prompt[STR_BUFSIZE] = "\0";
 		//return value to prompt color
@@ -30,25 +35,28 @@ int main(int const argc, char* const argv[])
 		linep = inputline(prompt);
 		strcpy(line, linep);
 		linep = line;
-		int optn = 0;
-		char* opts[MAXARGS] = {NULL};
-		//tokenize
-		char* tmp = NULL;
-		do {
-			opts[optn++] = tmp = strsep(&linep, CMDSEP);
-		} while (tmp != NULL && optn < MAXARGS);
-		optn--;
+		//line to args
+		toargs();
 		//execute command
 		if (msc(opts[0], 3, "h", "help", "man") == true)
-			ret = manpage(opts[0]);
+			ret = manpage(optn, opts);
 		else if (msc(opts[0], 3, "v", "ver", "ver") == true)
 			ret = printversion();
 		else if (msc(opts[0], 3, "q", "quit", "exit") == true)
 			quit = true;
-		else if (line[0] == '!')
-			ret = system(line + 1);
+		else if (line[0] == '!') {
+			char cmd[STR_BUFSIZE] = "\0";
+			strcpy(cmd, line + 1);
+			for (int i = 1; i < optn; i++)
+				sprintf(cmd, "%s %s", cmd, opts[i]);
+			ret = system(cmd);
+		}
 		else if (msc(opts[0], 2, "i", "init") == true)
 			ret = init(optn, opts);
+		else if (msc(opts[0], 2, "p", "print") == true)
+			ret = print(optn, opts);
+		else if (msc(opts[0], 2, "pn", "printn") == true)
+			ret = printn(optn, opts);
 		else if (msc(opts[0], 2, "sr", "seedrand") == true)
 			ret = seedrand(optn, opts);
 		else if (msc(opts[0], 2, "tr", "train") == true)
@@ -57,6 +65,11 @@ int main(int const argc, char* const argv[])
 			printf("%sFAIL: unknown command: \"%s\". \n%s", COLOR_FAIL, opts[0], COLOR_END);
 			ret = -1;
 		}
+		optn = 0;
+		for (int i = 0; i < MAXARGS; i++)
+			if (strcmp(opts[i], "\0") != 0)
+				for (int j = 0; j < STR_BUFSIZE; j++)
+					opts[i][j] = '\0';
 	} while (quit == false);
 	return 0;
 }

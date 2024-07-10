@@ -15,7 +15,7 @@ import pandas as pd
 
 csvfilename = []
 if len(sys.argv) <= 1:
-    print('ERROR: too few arguments. ')
+    print('FAIL: too few arguments. ')
     exit(-1)
 for i in range(len(sys.argv) - 1):
     csvfilename.append(sys.argv[i + 1])

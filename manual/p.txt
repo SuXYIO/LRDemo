@@ -1,0 +1,10 @@
+p/print [args]
+	Print values. 
+	If valuestring not given, print for all values. 
+	Options: 
+		-v [formatstring]
+			Print the value. 
+			Put all the valuechars you want in the formatstring. 
+			valuechars:  
+				%s / %r / %%
+				(seed, return value of last command, literal '%')

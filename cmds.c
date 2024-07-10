@@ -1,4 +1,5 @@
 #include "main.h"
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -14,6 +15,7 @@ neuron ng;
 extern int a_func_num;
 extern int l_func_num;
 extern int seed;
+extern int ret;
 
 //init neurons
 int init(int const argc, char** const argv)
@@ -29,15 +31,15 @@ int init(int const argc, char** const argv)
 	while ((o = getopt(argc, argv, "n:m:")) != -1) {
 		switch (o) {
 			case 'n':
-				if (optarg[0] == 'a') {
+				if (strcmp(optarg, "a") == 0) {
 					i_f = true;
 					i_g = true;
-				} else if (optarg[0] == 'f')
+				} else if (strcmp(optarg, "f") == 0)
 					i_f = true;
-				else if (optarg[0] == 'g')
+				else if (strcmp(optarg, "g") == 0)
 					i_g = true;
 				else {
-					printf("%sError: invalid option: '-%c %s'. %s\nUse \"h i\" for help. \n%s", COLOR_FAIL, o, optarg, COLOR_NORM, COLOR_END);
+					printf("%sFAIL: invalid option: '-%c %s'. %s\nUse \"h i\" for help. \n%s", COLOR_FAIL, o, optarg, COLOR_NORM, COLOR_END);
 					return -1;
 				}
 				break;
@@ -48,16 +50,16 @@ int init(int const argc, char** const argv)
 				else if (tmp == 1)
 					ifunc = rand_nmlstd;
 				else {
-					printf("%sError: invalid option: '-%c %s'. %s\nUse \"h i\" for help. \n%s", COLOR_FAIL, o, optarg, COLOR_NORM, COLOR_END);
+					printf("%sFAIL: invalid option: '-%c %s'. %s\nUse \"h i\" for help. \n%s", COLOR_FAIL, o, optarg, COLOR_NORM, COLOR_END);
 					return -1;
 				}
 				break;
 			case '?':
-				printf("%sError: invalid option: '-%c'. %s\nUse \"h i\" for help. \n%s", COLOR_FAIL, optopt, COLOR_NORM, COLOR_END);
+				printf("%sFAIL: invalid option: '-%c'. %s\nUse \"h i\" for help. \n%s", COLOR_FAIL, optopt, COLOR_NORM, COLOR_END);
 				return -1;
 				break;
 			default:
-				printf("%sError: unknown option: '-%c'. %s\nUse \"h i\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
+				printf("%sFAIL: unknown option: '-%c'. %s\nUse \"h i\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
 				return -1;
 		}
 	}
@@ -77,6 +79,179 @@ int init(int const argc, char** const argv)
 	return 0;
 }
 
+//print values
+int print(int const argc, char** const argv)
+{
+	char fmtstr[STR_BUFSIZE] = "\0";
+	//tmp var
+	int o = '?';
+	int tmp = 0;
+	optreset = true;
+	optind = 1;
+	while ((o = getopt(argc, argv, "v:")) != -1) {
+		switch (o) {
+			case 'v':
+				strcpy(fmtstr, optarg);
+				break;
+			case '?':
+				printf("%sFAIL: invalid option: '-%c'. %s\nUse \"h p\" for help. \n%s", COLOR_FAIL, optopt, COLOR_NORM, COLOR_END);
+				return -1;
+				break;
+			default:
+				printf("%sFAIL: unknown option: '-%c'. %s\nUse \"h p\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
+				return -1;
+		}
+	}
+	tmp = strlen(fmtstr);
+			for (int i = 0; i < tmp; i++) {
+				if (fmtstr[i] == '%') {
+					i++;
+					if (fmtstr[i] == 's')
+						printf("%d", seed);
+					else if (fmtstr[i] == 'r')
+						printf("%d", ret);
+					else if (fmtstr[i] == '%')
+						printf("%%");
+					else {
+						printf("%s\nFAIL: invalid option: '-%c %s'. %s\nUse \"h pn\" for help. \n%s", COLOR_FAIL, o, optarg, COLOR_NORM, COLOR_END);
+						return 1;
+					}
+				} else
+					printf("%c", fmtstr[i]);
+			}
+	printf("\n");
+	return 0;
+}
+
+//print values for neuron
+//TODO: redesign to support mutineuron outputting
+int printn(int const argc, char** const argv)
+{
+	char fmtstr[STR_BUFSIZE] = "%w, %b, %l, %W, %B\n";
+	bool tofile = false;
+	bool p_f = true;
+	bool p_g = true;
+	FILE* fp = NULL;
+	//local floating point precision
+	int lfpp = FPP;
+	//tmp var
+	int o = '?';
+	int tmp = 0;
+	optreset = true;
+	optind = 1;
+	while ((o = getopt(argc, argv, "n:f:F:p:")) != -1) {
+		switch (o) {
+			case 'n':
+				if (strcmp(optarg, "f") == 0) {
+					p_f = true;
+					p_g = false;
+				} else if (strcmp(optarg, "g") == 0) {
+					p_f = false;
+					p_g = true;
+				} else if (strcmp(optarg, "a") == 0) {
+					p_f = true;
+					p_g = true;
+				} else {
+					printf("%sFAIL: invalid option: '-%c %s'. %s\nUse \"h pn\" for help. \n%s", COLOR_FAIL, o, optarg, COLOR_NORM, COLOR_END);
+					return 1;
+				}
+				break;
+			case 'f':
+				strcpy(fmtstr, optarg);
+				break;
+			case 'F':
+				tofile = true;
+				short t = isusablefile(optarg);
+				if (t == 0)
+					fp = fopen(optarg, "w");
+				else if (t == 1)
+					tofile = false;
+				else if (t == 2)
+					return 1;
+				else {
+					printf("%sFAIL: isusablefile() fail. \n%s", COLOR_FAIL, COLOR_END);
+					return 1;
+				}
+				break;
+			case 'p':
+				lfpp = atoi(optarg);
+				break;
+			case '?':
+				printf("%sFAIL: invalid option: '-%c'. %s\nUse \"h pn\" for help. \n%s", COLOR_FAIL, optopt, COLOR_NORM, COLOR_END);
+				return -1;
+				break;
+			default:
+				printf("%sFAIL: unknown option: '-%c'. %s\nUse \"h pn\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
+				return -1;
+		}
+	}
+	short dotime = 1;
+	tmp = strlen(fmtstr);
+	neuron* npt = NULL;
+	if (p_f == true)
+		npt = &nf;
+	if (p_g == true)
+		npt = &ng;
+	if (p_f == true && p_g == true)
+		dotime = 2;
+	for (int i = 0; i < dotime; i++) {
+		if (dotime == 2) {
+			if (i == 0)
+				npt = &nf;
+			else if (i == 1)
+				npt = &ng;
+		}
+		if (tofile == false) {
+			for (int i = 0; i < tmp; i++) {
+				if (fmtstr[i] == '%') {
+					i++;
+					if (fmtstr[i] == 'w')
+						printf("%.*f", lfpp, (*npt).w);
+					else if (fmtstr[i] == 'b')
+						printf("%.*f", lfpp, (*npt).b);
+					else if (fmtstr[i] == 'l')
+						printf("%.*f", lfpp, (*npt).l);
+					else if (fmtstr[i] == 'W')
+						printf("%.*f", lfpp, (*npt).wg);
+					else if (fmtstr[i] == 'B')
+						printf("%.*f", lfpp, (*npt).bg);
+					else if (fmtstr[i] == '%')
+						printf("%%");
+					else {
+						printf("%s\nFAIL: invalid option: '-%c %s'. %s\nUse \"h pn\" for help. \n%s", COLOR_FAIL, o, optarg, COLOR_NORM, COLOR_END);
+						return 1;
+					}
+				} else
+					printf("%c", fmtstr[i]);
+			}
+		} else if (tofile == true) {
+			for (int i = 0; i < tmp; i++) {
+				if (fmtstr[i] == '%') {
+					i++;
+					if (fmtstr[i] == 'w')
+						fprintf(fp, "%.*f", lfpp, (*npt).w);
+					else if (fmtstr[i] == 'b')
+						fprintf(fp, "%.*f", lfpp, (*npt).b);
+					else if (fmtstr[i] == 'l')
+						fprintf(fp, "%.*f", lfpp, (*npt).l);
+					else if (fmtstr[i] == 'W')
+						fprintf(fp, "%.*f", lfpp, (*npt).wg);
+					else if (fmtstr[i] == 'B')
+						fprintf(fp, "%.*f", lfpp, (*npt).bg);
+					else if (fmtstr[i] == '%')
+						fprintf(fp, "%%");
+					else {
+						printf("%s\nFAIL: invalid option: '-%c %s' (file written). %s\nUse \"h pn\" for help. \n%s", COLOR_FAIL, o, optarg, COLOR_NORM, COLOR_END);
+						return 1;
+					}
+				} else
+					fprintf(fp, "%c", fmtstr[i]);
+			}
+		}
+	}
+	return 0;
+}
+
 //seed random
 int seedrand(int const argc, char** const argv)
 {
@@ -88,7 +263,7 @@ int seedrand(int const argc, char** const argv)
 		switch (o) {
 			case 's':
 				if (optarg == NULL) {
-					printf("%sError: option '-%c' requires an argument. %s\nUse \"h sr\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
+					printf("%sFAIL: option '-%c' requires an argument. %s\nUse \"h sr\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
 					return -1;
 				}
 				srand(atoi(optarg));
@@ -96,11 +271,11 @@ int seedrand(int const argc, char** const argv)
 				return 0;
 				break;
 			case '?':
-				printf("%sError: invalid option: '-%c'. %s\nUse \"h sr\" for help. \n%s", COLOR_FAIL, optopt, COLOR_NORM, COLOR_END);
+				printf("%sFAIL: invalid option: '-%c'. %s\nUse \"h sr\" for help. \n%s", COLOR_FAIL, optopt, COLOR_NORM, COLOR_END);
 				return -1;
 				break;
 			default:
-				printf("%sError: unknown option: '-%c'. %s\nUse \"h sr\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
+				printf("%sFAIL: unknown option: '-%c'. %s\nUse \"h sr\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
 				return -1;
 		}
 	}
@@ -134,7 +309,7 @@ int train(int const argc, char** const argv)
 				break;
 			case 'f':
 				if (optarg == NULL) {
-					printf("%sError: option '-%c' requires an argument. %s\nUse \"h tr\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
+					printf("%sFAIL: option '-%c' requires an argument. %s\nUse \"h tr\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
 					return -1;
 				}
 				writetofile = true;
@@ -142,45 +317,45 @@ int train(int const argc, char** const argv)
 				break;
 			case 'A':
 				if (optarg == NULL) {
-					printf("%sError: option '-%c' requires an argument. %s\nUse \"h tr\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
+					printf("%sFAIL: option '-%c' requires an argument. %s\nUse \"h tr\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
 					return -1;
 				}
 				a_func_num = atoi(optarg);
 				break;
 			case 'L':
 				if (optarg == NULL) {
-					printf("%sError: option '-%c' requires an argument. %s\nUse \"h tr\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
+					printf("%sFAIL: option '-%c' requires an argument. %s\nUse \"h tr\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
 					return -1;
 				}
 				l_func_num = atoi(optarg);
 				break;
 			case 'b':
 				if (optarg == NULL) {
-					printf("%sError: option '-%c' requires an argument. %s\nUse \"h tr\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
+					printf("%sFAIL: option '-%c' requires an argument. %s\nUse \"h tr\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
 					return -1;
 				}
 				batch_size = atoi(optarg);
 				break;
 			case 'e':
 				if (optarg == NULL) {
-					printf("%sError: option '-%c' requires an argument. %s\nUse \"h tr\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
+					printf("%sFAIL: option '-%c' requires an argument. %s\nUse \"h tr\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
 					return -1;
 				}
 				eta = atof(optarg);
 				break;
 			case 'l':
 				if (optarg == NULL) {
-					printf("%sError: option '-%c' requires an argument. %s\nUse \"h tr\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
+					printf("%sFAIL: option '-%c' requires an argument. %s\nUse \"h tr\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
 					return -1;
 				}
 				l_exp = atof(optarg);
 				break;
 			case '?':
-				printf("%sError: invalid option: '-%c'. %s\nUse \"h tr\" for help. \n%s", COLOR_FAIL, optopt, COLOR_NORM, COLOR_END);
+				printf("%sFAIL: invalid option: '-%c'. %s\nUse \"h tr\" for help. \n%s", COLOR_FAIL, optopt, COLOR_NORM, COLOR_END);
 				return -1;
 				break;
 			default:
-				printf("%sError: unknown option: '-%c'. %s\nUse \"h tr\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
+				printf("%sFAIL: unknown option: '-%c'. %s\nUse \"h tr\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
 				return -1;
 		}
 	}
@@ -315,24 +490,52 @@ int printversion(void)
 	return 0;
 }
 //show help (manual) page
-int manpage(char* entry_name)
+int manpage(int const argc, char** const argv)
 {
-	if (entry_name == NULL)
-		entry_name = "LR";
+	bool useraw = false;
+	//tmp var
+	int o = '?';
+	optreset = true;
+	if (argc > 1 && argv[1][0] != '-')
+		optind = 2;
+	else if (argc > 1 && argv[1][0] == '-')
+		optind = 1;
+	else
+		optind = 1;
+	while ((o = getopt(argc, argv, "r")) != -1) {
+		switch (o) {
+			case 'r':
+				useraw = true;
+				break;
+			case '?':
+				printf("%sFAIL: invalid option: '-%c'. %s\nUse \"h h\" for help. \n%s", COLOR_FAIL, optopt, COLOR_NORM, COLOR_END);
+				return -1;
+				break;
+			default:
+				printf("%sFAIL: unknown option: '-%c'. %s\nUse \"h h\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
+				return -1;
+		}
+	}
+	char filename[STR_BUFSIZE] = "\0";
+	if (argc <= 1 || isemptystr(argv[1]) || argv[1][0] == '-') {
+		strcpy(filename, "LR");
+	} else {
+		strcpy(filename, argv[1]);
+	}
 	char* const manual_path = "./manual/";
 	//use txt or lnk
 	char path[STR_BUFSIZE] = "\0";
-	sprintf(path, "%s%s.txt", manual_path, entry_name);
+	sprintf(path, "%s%s.txt", manual_path, filename);
 	if (isfileexist(path) == false) {
 		//try lnk
-		sprintf(path, "%s%s.lnk", manual_path, entry_name);
+		sprintf(path, "%s%s.lnk", manual_path, filename);
 		if (isfileexist(path) == false) {
 			printf("%sFAIL: fail opening manual. Fopen fail. \n%s", COLOR_FAIL, COLOR_END);
 			return -1;
 		}
 	}
 	//use less or printf
-	if (system("less 2> /dev/null") != 0) {
+	if (useraw == true || system("less 2> /dev/null") != 0) {
 		//less unusable, use print
 		FILE* file = NULL;
 		char ch;

@@ -15,7 +15,6 @@ char cmdhist[CMDHISTSIZE][STR_BUFSIZE] = {"\0"};
 //input a line
 char* inputline(char* prompt)
 {
-	//TODO: Fix cmdhist segfault
 	struct termios oldt, newt;
 	tcgetattr(STDIN_FILENO, &oldt);
 	newt = oldt;
@@ -68,7 +67,8 @@ char* inputline(char* prompt)
 						strcpy(input, cmdhist[hs - 1]);
 						dp = len = strlen(cmdhist[hs - 1]);
 					} else if (hs == 0) {
-						strcpy(input, "\0");
+						for (int i = 0; i < STR_BUFSIZE; i++)
+							input[i] = '\0';
 						dp = len = 0;
 					}
 				}
@@ -137,4 +137,70 @@ char* inputline(char* prompt)
 	}
 	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
 	return input;
+}
+
+//line to args
+extern char line[];
+extern int optn;
+extern char* opts[];
+int toargs()
+{
+	char tc = '\0';
+	char targ[STR_BUFSIZE] = "\0";
+	int targc = 0;
+	int i = 0;
+	bool instr1 = false;
+	bool instr2 = false;
+	do {
+		tc = line[i];
+		if (tc == ' ' || tc == '\t') {
+			if (instr1 == false && instr2 == false) {
+				//split to arg
+				strcpy(opts[optn], targ);
+				for (int i = 0; i < targc; i++)
+					targ[i] = '\0';
+				targc = 0;
+				optn++;
+			} else {
+				targ[targc++] = tc;
+			}
+		} else if (tc == '\\') {
+			i++;
+			tc = line[i];
+			sprintf(&targ[targc++], "\%c", tc);
+		} else if (tc == '\0') {
+			//split to arg
+			strcpy(opts[optn], targ);
+			for (int i = 0; i < targc; i++)
+				targ[i] = '\0';
+			targc = 0;
+			optn++;
+		} else if (tc == '\"') {
+			//str2
+			bool lastin = instr2;
+			if (instr1 == false) {
+				if (instr2 == true)
+					instr2 = false;
+				else
+					instr2 = true;
+			}
+			if ((instr1 == true || instr2 == true) && (instr2 == lastin))
+				targ[targc++] = tc;
+		} else if (tc == '\'') {
+			//str1
+			bool lastin = instr1;
+			if (instr2 == false) {
+				if (instr1 == true)
+					instr1 = false;
+				else
+					instr1 = true;
+			}
+			if ((instr1 == true || instr2 == true) && (instr1 == lastin))
+				targ[targc++] = tc;
+		} else {
+			targ[targc++] = tc;
+		}
+		i++;
+	} while (tc != '\0');
+	return 0;
 }

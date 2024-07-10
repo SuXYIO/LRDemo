@@ -66,14 +66,17 @@
 		bool isusablefile(char* const);
 		bool isfileexist(char* const);
 		bool isfileexist(char* const);
-		bool isemptystr(char* const str);
+		bool isemptystr(char* const);
 		bool msc(char*, int, ...);
 	//iofunc.c
 		char* inputline(char*);
+		int toargs(void);
 	//cmd.c
 		int init(int, char**);
+		int print(int, char**);
+		int printn(int, char**);
 		int seedrand(int, char**);
 		int train(int, char**);
 		int printversion(void);
-		int manpage(char*);
+		int manpage(int, char**);
 #endif

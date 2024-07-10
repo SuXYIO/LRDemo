@@ -1,3 +1,7 @@
-h/help/man [entry_name]
+h/help/man [entry_name] [args]
 	Help (manual) page, prints manual for entry, prints menu for LR if entry_name empty. 
 	entry_name is the command name. 
+	OPTIONS
+		-r
+			Raw output. 
+		Default is output to less, raw if less error. 
