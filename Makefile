@@ -4,21 +4,21 @@ CDBFLAGS = -g
 
 TARG = LR.out
 DBTARG = LR.db.out
-TARGS = $(shell find . -name '*.out')
 
 DEP = $(shell find . -name '*.h')
-CCODE = $(shell find . -name '*.c')
-DSYM = $(shell find . -name '*.dSYM')
-OBJ = $(CCODE:%.c=%.o)
+SRC = $(shell find . -name '*.c')
+OBJ = $(SRC:%.c=%.o)
+MAIN_OBJ = ./main.o
+OTHER_OBJ = $(filter-out $(MAIN_OBJ), $(OBJ))
 
-$(TARG): $(OBJ)
-	$(CC) $(CFLAGS) -o $(TARG) $(OBJ)
+$(TARG): $(OTHER_OBJ) $(MAIN_OBJ)
+	$(CC) $(CFLAGS) -o $(TARG) $(OTHER_OBJ) $(MAIN_OBJ)
 
 %.o: %.c $(DEP)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-debug: $(CCODE) $(DEP)
-	$(CC) $(CDBFLAGS) -o $(DBTARG) $(CCODE)
+debug: $(SRC) $(DEP)
+	$(CC) $(CDBFLAGS) -o $(DBTARG) $(SRC)
 
-clean: 
-	rm -rf $(TARGS) $(OBJ) $(DSYM)
+clean:
+	rm -rf $(OBJ) $(shell find . -name '*.dSYM') $(shell find . -name '*.o') $(shell find . -name '*.out')

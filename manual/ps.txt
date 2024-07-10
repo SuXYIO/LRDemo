@@ -1,0 +1,3 @@
+ps/pstr [str]
+	Print str. 
+	(debug command, for testing toargs() function)

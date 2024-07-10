@@ -165,9 +165,14 @@ int toargs()
 				targ[targc++] = tc;
 			}
 		} else if (tc == '\\') {
+			tc = line[i + 1];
+			if (tc == '\"')
+				sprintf(&targ[targc++], "%c", tc);
+			else if (tc == '\'')
+				sprintf(&targ[targc++], "%c", tc);
+			else
+				sprintf(&targ[targc++], "\\%c", tc);
 			i++;
-			tc = line[i];
-			sprintf(&targ[targc++], "\%c", tc);
 		} else if (tc == '\0') {
 			//split to arg
 			strcpy(opts[optn], targ);

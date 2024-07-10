@@ -15,6 +15,10 @@ COMMANDS
 		Seed random. 
 	tr/train [args]
 		Auto training. 
+	enabledebug
+		Enable debug mode. 
+	disabledebug
+		Disable debug mode. 
 	! [cmd]
 		Execute shell commands. 
 	h/help/man [entry_name]
@@ -23,6 +27,19 @@ COMMANDS
 		Print version info. 
 	q/quit/exit
 		Quits program. 
+	Debug commands: 
+		ps/pstr [str]
+			Print str. 
+OPTIONS
+	-D
+		Debug mode. Enable access to debugging commands. 
+	-h
+		Print manual and exit. 
+NOTE
+	When inputting a string with blank chars to the prompt, like in shells, use " or ' to cover it. 
+	When inputting " or ' inside a string, use \" or \'. (can use ' in ", can use " in ')
+	Example: 
+		"foo 'bar' \"baz\"" will be interpreted to  foo 'bar' "baz"
 DEVELOPER
 	SuXYIO (https://github.com/SuXYIO)
 

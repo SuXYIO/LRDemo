@@ -40,7 +40,7 @@
 			double bg;
 		} neuron;
 //functions
-	//neuron.c
+	//neuronmath.c
 		double f(double);
 		double g(double);
 		double MSE(double, double);
@@ -71,7 +71,7 @@
 	//iofunc.c
 		char* inputline(char*);
 		int toargs(void);
-	//cmd.c
+	//./cmds
 		int init(int, char**);
 		int print(int, char**);
 		int printn(int, char**);
@@ -79,4 +79,8 @@
 		int train(int, char**);
 		int printversion(void);
 		int manpage(int, char**);
+		int enabledebug(int, char**);
+		int disabledebug(int, char**);
+		//debug cmds
+		int printstr(int, char**);
 #endif
