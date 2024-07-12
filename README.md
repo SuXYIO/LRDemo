@@ -14,9 +14,8 @@ cd LRDemo
 make
 ```
 ### Windows:
-Not supported yet.  
-The program uses POSIX libs, which vanilla Windows doesn't support. The versions before might have a chance of working on Windows.  
-Might work if using methods like MinGW to use POSIX standards on Windows.  
+Might work by using methods like `MinGW`.  
+Haven't tested yet.  
 
 ## Usage
 ```bash
