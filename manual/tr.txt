@@ -2,8 +2,13 @@ tr/train [args]
 	Auto training. 
 	Options: 
 		-V	Verbose mode, prints values of vars every iteration. 
-		-t	Thread mode, enable muti-thread. Might increase calculation speed if batch_size is large. Not recommended, decreases speed most of the time. 
+		-t	Thread mode, enable muti-thread. Might increase calculation speed if batch_size is large. 
+			Not recommended, decreases speed most of the time. 
+			Max thread numbers is defined by the MAX_THREADS macro in main.h. 
 		-f [filename]	Write info per iteration to a file, in CSV format. Creates one if file doesn't exist, ask if overwrite if it does. 
+		-p [precision]
+			Define how many numbers to print after decimal point for floats and doubles. 
+			The default value is defined in main.h FPP macro. 
 		-A [funcnum]	Define which activation function to use, 0 is default. 
 			funcnum:
 				0: None

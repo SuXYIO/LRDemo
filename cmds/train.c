@@ -21,6 +21,7 @@ int train(int const argc, char** const argv)
 	int thread_size = 0;
 	bool verbose = false;
 	bool use_thread = false;
+	int lfpp = FPP;
 	bool writetofile = false;
 	char csvfilename[STR_BUFSIZE];
 	FILE* csvfilep = NULL;
@@ -28,7 +29,7 @@ int train(int const argc, char** const argv)
 	int o = '?';
 	optreset = true;
 	optind = 1;
-	while ((o = getopt(argc, argv, "Vtf:A:L:b:e:l:")) != -1) {
+	while ((o = getopt(argc, argv, "Vtf:p:A:L:b:e:l:")) != -1) {
 		switch (o) {
 			case 'V':
 				verbose = true;
@@ -37,46 +38,25 @@ int train(int const argc, char** const argv)
 				use_thread = true;
 				break;
 			case 'f':
-				if (optarg == NULL) {
-					printf("%sFAIL: option '-%c' requires an argument. %s\nUse \"h tr\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
-					return -1;
-				}
 				writetofile = true;
 				strcpy(csvfilename, optarg);
 				break;
+			case 'p':
+				lfpp = atoi(optarg);
+				break;
 			case 'A':
-				if (optarg == NULL) {
-					printf("%sFAIL: option '-%c' requires an argument. %s\nUse \"h tr\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
-					return -1;
-				}
 				a_func_num = atoi(optarg);
 				break;
 			case 'L':
-				if (optarg == NULL) {
-					printf("%sFAIL: option '-%c' requires an argument. %s\nUse \"h tr\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
-					return -1;
-				}
 				l_func_num = atoi(optarg);
 				break;
 			case 'b':
-				if (optarg == NULL) {
-					printf("%sFAIL: option '-%c' requires an argument. %s\nUse \"h tr\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
-					return -1;
-				}
 				batch_size = atoi(optarg);
 				break;
 			case 'e':
-				if (optarg == NULL) {
-					printf("%sFAIL: option '-%c' requires an argument. %s\nUse \"h tr\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
-					return -1;
-				}
 				eta = atof(optarg);
 				break;
 			case 'l':
-				if (optarg == NULL) {
-					printf("%sFAIL: option '-%c' requires an argument. %s\nUse \"h tr\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
-					return -1;
-				}
 				l_exp = atof(optarg);
 				break;
 			case '?':
@@ -194,19 +174,19 @@ int train(int const argc, char** const argv)
 		nf.b -= eta * nf.bg;
 		//print results
 		if (writetofile == true)
-			fprintf(csvfilep, "%.*f,%.*f,%.*f,%.*f,%.*f,%.*f,%.*f\n", FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, nf.l, FPP, nf.wg, FPP, nf.bg);
+			fprintf(csvfilep, "%.*f,%.*f,%.*f,%.*f,%.*f,%.*f,%.*f\n", lfpp, nf.w, lfpp, nf.b, lfpp, ng.w, lfpp, ng.b, lfpp, nf.l, lfpp, nf.wg, lfpp, nf.bg);
 		if (verbose == true)
-			printf("%siter = %d, nf.w = %.*f, nf.b = %.*f, ng.w = %.*f, ng.b = %.*f, nf.l = %.*f, nf.wg = %.*f, nf.bg = %.*f; \n%s", COLOR_NORM, iter, FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, nf.l, FPP, nf.wg, FPP, nf.bg, COLOR_END);
+			printf("%siter = %d, nf.w = %.*f, nf.b = %.*f, ng.w = %.*f, ng.b = %.*f, nf.l = %.*f, nf.wg = %.*f, nf.bg = %.*f; \n%s", COLOR_NORM, iter, lfpp, nf.w, lfpp, nf.b, lfpp, ng.w, lfpp, ng.b, lfpp, nf.l, lfpp, nf.wg, lfpp, nf.bg, COLOR_END);
 		//check if gradient explosion
 		if (isfinite(nf.l) != true || isfinite(nf.wg) != true || isfinite(nf.bg) != true) {
-			printf("%sFAIL: l or nf.wg or nf.bg not finite, probably gradient explosion. \n%sseed = %d, \niter = %d, \nnf.w = %.*f, nf.b = %.*f, \nng.w = %.*f, ng.b = %.*f, \neta = %.*f, batch_size = %d, \nnf.l = %.*f, l_exp = %.*f\n%s", COLOR_FAIL, COLOR_NORM, seed, iter, FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, eta, batch_size, FPP, nf.l, FPP, l_exp, COLOR_END);
+			printf("%sFAIL: l or nf.wg or nf.bg not finite, probably gradient explosion. \n%sseed = %d, \niter = %d, \nnf.w = %.*f, nf.b = %.*f, \nng.w = %.*f, ng.b = %.*f, \neta = %.*f, batch_size = %d, \nnf.l = %.*f, l_exp = %.*f\n%s", COLOR_FAIL, COLOR_NORM, seed, iter, lfpp, nf.w, lfpp, nf.b, lfpp, ng.w, lfpp, ng.b, lfpp, eta, batch_size, lfpp, nf.l, lfpp, l_exp, COLOR_END);
 			if (writetofile == true)
 				fclose(csvfilep);
 			return -1;
 		}
 		iter++;
 	} while (nf.l >= l_exp);
-	printf("%sSUCC: l >= l_exp. \n%sseed = %d, \niter = %d, \nnf.w_init = %.*f, nf.b_init = %.*f, \nnf.w = %.*f, nf.b = %.*f, \nng.w = %.*f, ng.b = %.*f, \neta = %.*f, batch_size = %d, \nnf.l = %.*f, l_exp = %.*f\n%s", COLOR_SUCC, COLOR_NORM, seed, iter, FPP, nf_w_init, FPP, nf_b_init, FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, eta, batch_size, FPP, nf.l, FPP, l_exp, COLOR_END);
+	printf("%sSUCC: l >= l_exp. \n%sseed = %d, \niter = %d, \nnf.w_init = %.*f, nf.b_init = %.*f, \nnf.w = %.*f, nf.b = %.*f, \nng.w = %.*f, ng.b = %.*f, \neta = %.*f, batch_size = %d, \nnf.l = %.*f, l_exp = %.*f\n%s", COLOR_SUCC, COLOR_NORM, seed, iter, lfpp, nf_w_init, lfpp, nf_b_init, lfpp, nf.w, lfpp, nf.b, lfpp, ng.w, lfpp, ng.b, lfpp, eta, batch_size, lfpp, nf.l, lfpp, l_exp, COLOR_END);
 	if (writetofile == true)
 		fclose(csvfilep);
 	return 0;

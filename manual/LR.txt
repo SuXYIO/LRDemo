@@ -9,8 +9,6 @@ COMMANDS
 		Init values for neuron. 
 	p/print [args]
 		Print value. 
-	pn/printneuron [args]
-		Print value for neuron. 
 	sr/seedrand [args]
 		Seed random. 
 	tr/train [args]
@@ -35,11 +33,19 @@ OPTIONS
 		Debug mode. Enable access to debugging commands. 
 	-h
 		Print manual and exit. 
-NOTE
-	When inputting a string with blank chars to the prompt, like in shells, use " or ' to cover it. 
-	When inputting " or ' inside a string, use \" or \'. (can use ' in ", can use " in ')
-	Example: 
-		"foo 'bar' \"baz\"" will be interpreted to  foo 'bar' "baz"
+INPUT
+	Inputting strings: 
+		When inputting a string with blank chars to the prompt, like in shells, use " or ' to cover it. 
+		When inputting " or ' inside a string, use \" or \'. (can use ' in ", can use " in ')
+		Example: 
+			"foo 'bar' \"baz\"" will be interpreted to  foo 'bar' "baz"
+	Command history: 
+		The program will store commands (that's not blank) to memory. When pressing the "Up" key in the prompt, go up one history, down one history when pressing the "Down" key. 
+		These two keys only work when lenth of input is 0. 
+		The histsize (max numbers of histories to store) is defined by CMDHISTSIZE macro in main.h. 
+		Note that this is only in memory, will not be saved after the program closes. 
+	Command prompt: 
+		The command prompt string is defined by PROMPT macro in main.h. 
 DEVELOPER
 	SuXYIO (https://github.com/SuXYIO)
 

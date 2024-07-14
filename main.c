@@ -100,5 +100,7 @@ int main(int const argc, char* const argv[])
 				for (int j = 0; j < STR_BUFSIZE; j++)
 					opts[i][j] = '\0';
 	} while (quit == false);
+	for (int i = 0; i < MAXARGS; i++)
+		free(opts[i]);
 	return 0;
 }
