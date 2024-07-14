@@ -66,7 +66,7 @@ int main(int const argc, char* const argv[])
 		if (msc(opts[0], 3, "h", "help", "man") == true)
 			ret = manpage(optn, opts);
 		else if (msc(opts[0], 3, "v", "ver", "ver") == true)
-			ret = printversion();
+			ret = printversion(optn, opts);
 		else if (msc(opts[0], 3, "q", "quit", "exit") == true)
 			quit = true;
 		else if (line[0] == '!') {
@@ -80,8 +80,6 @@ int main(int const argc, char* const argv[])
 			ret = init(optn, opts);
 		else if (msc(opts[0], 2, "p", "print") == true)
 			ret = print(optn, opts);
-		else if (msc(opts[0], 2, "pn", "printn") == true)
-			ret = printn(optn, opts);
 		else if (msc(opts[0], 2, "sr", "seedrand") == true)
 			ret = seedrand(optn, opts);
 		else if (msc(opts[0], 2, "tr", "train") == true)
@@ -94,7 +92,7 @@ int main(int const argc, char* const argv[])
 			ret = printstr(optn, opts);
 		else {
 			printf("%sFAIL: unknown command: \"%s\". \n%s", COLOR_FAIL, opts[0], COLOR_END);
-			ret = -1;
+			ret = 1;
 		}
 		optn = 0;
 		for (int i = 0; i < MAXARGS; i++)

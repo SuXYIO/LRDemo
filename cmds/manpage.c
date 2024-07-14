@@ -5,7 +5,7 @@
 #include <getopt.h>
 
 //print version
-int printversion(void)
+int printversion(int const argc, char** const argv)
 {
 	printf("Name: LR\nVersion: %s\n", VER);
 	return 0;

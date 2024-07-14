@@ -1,12 +1,14 @@
 i/init [args]
 	Init values for neuron. 
 	Options: 
-		-n [neuronname]	Define which neuron to init, a is default. 
+		-n [neuronname]
+			Define which neuron to init, a is default. 
 			neuronname:
 				a: All, f & g
 				f: main neuron. 
 				g: training neruon. 
-		-m [methodname]	Define which init method to use, 1 is default. 
+		-m [methodname]
+			Define which init method to use, 1 is default. 
 			methodname: 
 				0: All to 0.0. 
 				1: Normal distro (mean = 0.0, stddev = 1.0, box-muller approach). 

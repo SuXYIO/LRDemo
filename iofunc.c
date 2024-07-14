@@ -209,3 +209,21 @@ int toargs()
 	} while (tc != '\0');
 	return 0;
 }
+//pfunc
+//quick way to decide whether to print to file or not
+int pfunc(bool tofile, FILE* fp, char* format, ...)
+{
+	int ret = 0;
+	va_list args;
+	va_start(args, format);
+	if (tofile == true) {
+		if (fp != NULL)
+			ret = vfprintf(fp, format, args);
+	} else if (tofile == false) {
+		ret = vprintf(format, args);
+	} else {
+		ret = -1;
+	}
+	va_end(args);
+	return ret;
+}

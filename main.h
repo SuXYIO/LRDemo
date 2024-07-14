@@ -5,8 +5,9 @@
 #pragma once
 #ifndef MAIN_H
 #define MAIN_H
-//includes
+//includes (for function prototypes)
 #include <stdbool.h>
+#include <stdio.h>
 //defines
 	//Version stuff
 		#define VER "2.0.0"
@@ -71,13 +72,13 @@
 	//iofunc.c
 		char* inputline(char*);
 		int toargs(void);
+		int pfunc(bool, FILE*, char*, ...);
 	//./cmds
 		int init(int, char**);
 		int print(int, char**);
-		int printn(int, char**);
 		int seedrand(int, char**);
 		int train(int, char**);
-		int printversion(void);
+		int printversion(int, char**);
 		int manpage(int, char**);
 		int enabledebug(int, char**);
 		int disabledebug(int, char**);
