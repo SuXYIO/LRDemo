@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <getopt.h>
+#include <signal.h>
 
 //neuron f()
 neuron nf;
@@ -21,6 +22,9 @@ int optn = 0;
 char* opts[MAXARGS] = {"\0"};
 int main(int const argc, char* const argv[])
 {
+	//assign signal handler
+	signal(SIGINT, sighandler);
+	signal(SIGTERM, sighandler);
 	//get options
 	int o = '?';
 	int tmp = 1;
@@ -102,5 +106,6 @@ int main(int const argc, char* const argv[])
 	} while (quit == false);
 	for (int i = 0; i < MAXARGS; i++)
 		free(opts[i]);
+	exit(0);
 	return 0;
 }

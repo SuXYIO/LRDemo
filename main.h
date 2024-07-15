@@ -84,4 +84,6 @@
 		int disabledebug(int, char**);
 		//debug cmds
 		int printstr(int, char**);
+	//signal.c
+		void sighandler(int);
 #endif
