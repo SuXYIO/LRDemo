@@ -49,11 +49,11 @@ int print(int const argc, char** const argv)
 				lfpp = atoi(optarg);
 				break;
 			case '?':
-				printf("%sFAIL: invalid option: '-%c'. %s\nUse \"h pn\" for help. \n%s", COLOR_FAIL, optopt, COLOR_NORM, COLOR_END);
+				printf("%sFAIL: invalid option: '-%c'. %s\nUse \"h p\" for help. \n%s", COLOR_FAIL, optopt, COLOR_NORM, COLOR_END);
 				return -1;
 				break;
 			default:
-				printf("%sFAIL: unknown option: '-%c'. %s\nUse \"h pn\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
+				printf("%sFAIL: unknown option: '-%c'. %s\nUse \"h p\" for help. \n%s", COLOR_FAIL, o, COLOR_NORM, COLOR_END);
 				return -1;
 		}
 	}

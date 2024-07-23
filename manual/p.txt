@@ -1,4 +1,4 @@
-pn/printneuron [args]
+p/print [args]
 	Print values for neuron. 
 	If name not given, print for all names. 
 	If valuestring not given, print for all values. 
@@ -18,7 +18,7 @@ pn/printneuron [args]
 					%%	literal '%'
 				Where '*' is replaced by a neuronname (either 'f' or 'g'). 
 				Note that l / W / B will be always 0.0 for g normally, since it's the constant neruon. 
-			Default is "%w, %b, %l, %W, %B\n". 
+			Default is "%fw, %fb, %fl, %fW, %fB\n%gw, %gb, %gl, %gW, %gB". 
 		-F [filename]
 			Print to file. 
 		-N

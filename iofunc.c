@@ -209,6 +209,7 @@ int toargs()
 	} while (tc != '\0');
 	return 0;
 }
+
 //pfunc
 //quick way to decide whether to print to file or not
 int pfunc(bool tofile, FILE* fp, char* format, ...)
