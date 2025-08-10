@@ -4,8 +4,8 @@
 #include <stdbool.h>
 
 //get neurons
-neuron nf;
-neuron ng;
+extern neuron nf;
+extern neuron ng;
 //extern options
 extern int a_func_num;
 extern int l_func_num;
