@@ -47,11 +47,7 @@ See manual:
 
 1. **./stat/plot.py**  
    A simple plot python program for plotting the CSV formatted file that can be outputted by LR using `-f` option (see Args).  
-   Note that it needs `matplotlib` and `pandas` lib to work.  
-   More info in plot.py's first multiline comment.
-2. **./stat/multiplot.py**  
-   A version of plot.py, but shows two set of CSV formatted file merged into one plot, doesn't show gradient information.  
-   More info in multiplot.py's first multiline comment.
+   You can also pass multiple sets of data into it for comparison, but too much will make the plot seem chaotic.
 
 #### Usage
 

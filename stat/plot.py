@@ -1,54 +1,43 @@
 #!/usr/bin/env python3
 """
-Plot
-Simple example of using the output CSV file to plot.
+MultiPlot
+Simple example of using two output CSV files to plot one graph.
 
 Usage
-    python3 plot.py [filepath]
+    python3 multiplot.py [filepath0] [filepath1] ...
     or
-    ./plot.py [filepath]
+    ./multiplot.py [filepath0] [filepath1] ...
         "filepath" is the path to the CSV formatted file.
-        If "filepath" empty, the program will search in the current dir for "*.csv".
-        It uses the only one if there is only one "*.csv" file.
-        It prompts the user which one to use if there is more than one or no "*.csv" file.
 """
-import os
 import sys
-import matplotlib
-
 import matplotlib.pyplot as plt
 import pandas as pd
 
-if len(sys.argv) > 1:
-    csvfilename = sys.argv[1]
-else:
-    PATTERN = ".csv"
-    csvfiles = []
-    for f in os.listdir("."):
-        if f.endswith(PATTERN):
-            csvfiles.append(f)
-    if len(csvfiles) > 1:
-        # muti csv, ask for one
-        print(f"Found mutiple CSV files: \n{print(csvfiles)}\n")
-        csvfilename = input("Choose one CSV file\n> ")
-    elif len(csvfiles) == 1:
-        csvfilename = csvfiles[0]
-    else:
-        # no csv
-        csvfilename = input("Enter filepath\n> ")
+csvfilename = []
+if len(sys.argv) <= 1:
+    print("ERROR: too few arguments. ")
+    exit(-1)
+for i in range(len(sys.argv) - 1):
+    csvfilename.append(sys.argv[i + 1])
 
-df = pd.read_csv(csvfilename)
-ln = df.index
+df = []
+ln = []
+print(csvfilename)
+for i in range(len(sys.argv) - 1):
+    df.append(pd.read_csv(csvfilename[i]))
+    ln.append(df[i].index)
+# create plot
+for i in range(len(sys.argv) - 1):
+    plt.plot(ln[i], df[i]["f_w"], label=f"f_w{i}")
+    plt.plot(ln[i], df[i]["f_b"], label=f"f_b{i}")
+    plt.plot(ln[i], df[i]["g_w"], label=f"g_w{i}")
+    plt.plot(ln[i], df[i]["g_b"], label=f"g_b{i}")
+    plt.plot(ln[i], df[i]["l"], label=f"l{i}")
 
-plt.plot(ln, df["f_w"], label="f_w")
-plt.plot(ln, df["f_b"], label="f_b")
-plt.plot(ln, df["g_w"], label="g_w")
-plt.plot(ln, df["g_b"], label="g_b")
-plt.plot(ln, df["l"], label="l")
-
-plt.title("LinearRegressionPlot")
+plt.title("MultiLinearRegressionPlot")
 plt.xlabel("iter")
 plt.ylabel("value")
 plt.legend()
 
 plt.show()
+exit(0)
