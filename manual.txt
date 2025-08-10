@@ -3,21 +3,19 @@ NAME
 	Version 1.0.0
 
 SYNOPSIS
-	./LR.out [args]
+	./LR [args]
 
 DESCRIPTION
-	Linear regression demo made with C standard libs. 
+	Linear regression demo made with C standard libs.
 
 OPTIONS
-	-V	Verbose mode, prints values of vars every iteration. 
+	-V	Verbose mode, prints values of vars every iteration.
 
-	-t	Thread mode, enable muti-thread. Might increase calculation speed if batch_size is large. Not recommended, decreases speed most of the time. 
+	-s [seed]	Define seed, use the seed to generate random, can duplicate run. If not enabled, the program will seed using time (timestamp * nsec).
 
-	-s [seed]	Define seed, use the seed to generate random, can duplicate run. If not enabled, the program will seed using time (timestamp * nsec). 
+	-f [filename]	Write info per iteration to a file, in CSV format. Creates one if file doesn't exist, ask if overwrite if it does.
 
-	-f [filename]	Write info per iteration to a file, in CSV format. Creates one if file doesn't exist, ask if overwrite if it does. 
-
-	-A [funcnum]	Define which activation function to use, 0 is default. 
+	-A [funcnum]	Define which activation function to use, 0 is default.
 		funcnum:
 			0: None
 			1: ReLU
@@ -25,19 +23,23 @@ OPTIONS
 			3: Sigmoid
 			4: Tanh
 
-	-L [funcnum]	Define which loss function to use, 0 is default. 
+	-L [funcnum]	Define which loss function to use, 0 is default.
 		funcnum:
 			0: MSE
 
-	-b [batchsize]	Define how large is one batch (batch_size), 256 is default. 
+	-E [maxepochs]	Define how many epochs to stop training. If this is set, -l is ignored, otherwise use -l.
 
-	-e [eta]	Define eta (learning rate), 0.001 is default. 
+	-b [batchsize]	Define how large is one batch (batch_size), 256 is default.
 
-	-l [expectedloss]	Define expected loss, the training ends when loss < expectedloss, 0.0001 is default. 
+	-e [eta]	Define eta (learning rate), 0.001 is default.
+
+	-l [expectedloss]	Define expected loss, the training ends when loss < expectedloss, 0.001 is default.
+
+	-n [noisefactor]	Define the noise factor for data neuron g(x), which is multiplied with a standard normal distribution as noise, 0 is default.
 	
-	-v	Print version info. 
+	-v	Print version info.
 
-	-h	Help (manual) page, prints this manual.  
+	-h	Help (manual) page, prints this manual.
 
 AUTHOR
 	SuXYIO (https://github.com/SuXYIO)

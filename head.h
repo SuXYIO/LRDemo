@@ -8,8 +8,6 @@
 //defines
 	//Version stuff
 		#define VER "1.0.0"
-	//Max number of threads to run
-		#define MAX_THREADS 1024
 	//Buffer size for strings
 		#define STR_BUFSIZE 128
 	//Float Precision for Print: how many digits to print after float decimal point
@@ -45,6 +43,7 @@
 		double Sigmoid_grad(double x);
 		double Tanh(double x);
 		double Tanh_grad(double x);
+		double rand_noise(double factor);
 		int strand(void);
 		double rand_nml(double mean, double stddev);
 		double rand_nmlstd(void);

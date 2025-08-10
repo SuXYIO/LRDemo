@@ -34,7 +34,7 @@ for i in range(len(sys.argv) - 1):
     plt.plot(ln[i], df[i]["g_b"], label=f"g_b{i}")
     plt.plot(ln[i], df[i]["l"], label=f"l{i}")
 
-plt.title("MultiLinearRegressionPlot")
+plt.title(f"LRPlot for {csvfilename}")
 plt.xlabel("iter")
 plt.ylabel("value")
 plt.legend()

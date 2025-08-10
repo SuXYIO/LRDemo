@@ -14,6 +14,7 @@ neuron ng;
 //extern options
 int a_func_num = 0;
 int l_func_num = 0;
+double noise_factor = 0.0;
 
 int main(int const argc, char* const argv[])
 {
@@ -22,26 +23,22 @@ int main(int const argc, char* const argv[])
 	//seed rand
 	seed = strand();
 	double eta = 0.001;
-	double l_exp = 0.0001;
-	int batch_size = 256;
-	int thread_size = 0;
+	unsigned long max_epochs = 0;
+	double l_exp = 0.001;
+	unsigned int batch_size = 256;
 	//check command args
 	//store opts
 	bool verbose = false;
-	bool use_thread = false;
 	bool writetofile = false;
 	char csvfilename[STR_BUFSIZE];
 	FILE* csvfilep = NULL;
 	//tmp var
 	int o;
-	const char* optstring = "Vts:f:A:L:b:e:l:vh";
+	const char* optstring = "Vs:f:A:L:E:b:e:l:n:vh";
 	while ((o = getopt(argc, argv, optstring)) != -1) {
 		switch (o) {
 			case 'V':
 				verbose = true;
-				break;
-			case 't':
-				use_thread = true;
 				break;
 			case 's':
 				seed = atoi(optarg);
@@ -57,6 +54,9 @@ int main(int const argc, char* const argv[])
 			case 'L':
 				l_func_num = atoi(optarg);
 				break;
+			case 'E':
+				max_epochs = atoi(optarg);
+				break;
 			case 'b':
 				batch_size = atoi(optarg);
 				break;
@@ -65,6 +65,9 @@ int main(int const argc, char* const argv[])
 				break;
 			case 'l':
 				l_exp = atof(optarg);
+				break;
+			case 'n':
+				noise_factor = atof(optarg);
 				break;
 			case 'v':
 				printversion();
@@ -75,7 +78,7 @@ int main(int const argc, char* const argv[])
 				return 0;
 				break;
 			case '?':
-				printf("%sError: invalid option: '%c'. %s\nUse \"./LR.out -h\" for help. \n%s", COLOR_ERROR, optopt, COLOR_NORM, COLOR_END);
+				printf("%sError: invalid option: '%c'. %s\nUse \"./LR -h\" for help. \n%s", COLOR_ERROR, optopt, COLOR_NORM, COLOR_END);
 				return -1;
 				break;
 		}
@@ -85,15 +88,6 @@ int main(int const argc, char* const argv[])
 	//record initial f_w & f_b for future use
 	double nf_w_init = nf.w;
 	double nf_b_init = nf.b;
-	//init thread_size
-	//prevent too many threads
-	if (use_thread == true) {
-		if (batch_size <= MAX_THREADS)
-			thread_size = batch_size;
-		else {
-			thread_size = MAX_THREADS;
-		}
-	}
 	//open file if -f is on
 	//check if file is usable
 	if (writetofile == true) {
@@ -132,7 +126,11 @@ int main(int const argc, char* const argv[])
 	int iter = 0;
 	do {
 		//calc batch
-		if (use_thread == true) {
+		/*
+		// this piece of code is abandoned, since the multithread didn't work out to improve performance
+		// the argument 't' is also deleted
+		if (thread_size != 0) {
+			//use multithread
 			//times of threads to run
 			double tt = (float)batch_size / (float)thread_size;
 			//executed thread number
@@ -155,12 +153,18 @@ int main(int const argc, char* const argv[])
 				for (int i = 0; i < rmnt; i++)
 					pthread_join(tid[i], NULL);
 			}
-		} else if (use_thread == false) {
+		} else {
 			//normal calculate batch
 			for (int i = 0; i < batch_size; i++) {
 				calc_batch(NULL);
 			}
 		}
+		*/
+		// calculate batch
+		for (int i = 0; i < batch_size; i++) {
+			calc_batch(NULL);
+		}
+
 		//calc loss & gradients (average of batch)
 		nf.l /= batch_size;
 		nf.wg /= batch_size;
@@ -175,14 +179,25 @@ int main(int const argc, char* const argv[])
 			printf("%siter = %d, nf.w = %.*f, nf.b = %.*f, ng.w = %.*f, ng.b = %.*f, nf.l = %.*f, nf.wg = %.*f, nf.bg = %.*f; \n%s", COLOR_NORM, iter, FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, nf.l, FPP, nf.wg, FPP, nf.bg, COLOR_END);
 		//check if gradient explosion
 		if (isfinite(nf.l) != true || isfinite(nf.wg) != true || isfinite(nf.bg) != true) {
-			printf("%sERROR: l or nf.wg or nf.bg not finite, probably gradient explosion. \n%sseed = %d, \niter = %d, \nnf.w = %.*f, nf.b = %.*f, \nng.w = %.*f, ng.b = %.*f, \neta = %.*f, batch_size = %d, \nnf.l = %.*f, l_exp = %.*f\n%s", COLOR_ERROR, COLOR_NORM, seed, iter, FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, eta, batch_size, FPP, nf.l, FPP, l_exp, COLOR_END);
+			printf("%sERROR: l or nf.wg or nf.bg not finite, probably gradient explosion. \n%sseed = %d, \niter = %d, \nnf.w = %.*f, nf.b = %.*f, \nng.w = %.*f, ng.b = %.*f, \neta = %.*f, batch_size = %d, \nnf.l = %.*f, l_exp = %.*f, noise_factor = %.*f\n%s", COLOR_ERROR, COLOR_NORM, seed, iter, FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, eta, batch_size, FPP, nf.l, FPP, l_exp, FPP, noise_factor, COLOR_END);
 			if (writetofile == true)
 				fclose(csvfilep);
 			return -1;
 		}
 		iter++;
-	} while (nf.l >= l_exp);
-	printf("%sSUCC: l >= l_exp. \n%sseed = %d, \niter = %d, \nnf.w_init = %.*f, nf.b_init = %.*f, \nnf.w = %.*f, nf.b = %.*f, \nng.w = %.*f, ng.b = %.*f, \neta = %.*f, batch_size = %d, \nnf.l = %.*f, l_exp = %.*f\n%s", COLOR_SUCC, COLOR_NORM, seed, iter, FPP, nf_w_init, FPP, nf_b_init, FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, eta, batch_size, FPP, nf.l, FPP, l_exp, COLOR_END);
+
+		//check for success
+		if (max_epochs != 0) {
+			// use epoch (iter) check
+			if (iter >= max_epochs)
+				break;
+		} else {
+			// use loss check
+			if (nf.l < l_exp)
+				break;
+		}
+	} while (true);
+	printf("%sSUCC: l >= l_exp. \n%sseed = %d, \niter = %d, \nnf.w_init = %.*f, nf.b_init = %.*f, \nnf.w = %.*f, nf.b = %.*f, \nng.w = %.*f, ng.b = %.*f, \neta = %.*f, batch_size = %d, \nnf.l = %.*f, l_exp = %.*f, noise_factor = %.*f\n%s", COLOR_SUCC, COLOR_NORM, seed, iter, FPP, nf_w_init, FPP, nf_b_init, FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, eta, batch_size, FPP, nf.l, FPP, l_exp, FPP, noise_factor, COLOR_END);
 	if (writetofile == true)
 		fclose(csvfilep);
 	return 0;

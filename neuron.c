@@ -6,15 +6,17 @@
 //get weights & biases
 extern neuron nf;
 extern neuron ng;
-//Functions
+//get extern
+extern double noise_factor;
 
+//Functions
 double f(double x)
 {
 	return nf.w * x + nf.b;
 }
 double g(double x)
 {
-	return ng.w * x + nf.b;
+	return ng.w * x + nf.b + rand_noise(noise_factor);
 }
 
 //Loss function
@@ -44,7 +46,7 @@ double grad(double x)
 {
 	return 1.0;
 }
-//ReLU & RelU gradient
+//ReLU & ReLU gradient
 //ReLU(x) = max(x, 0)
 double ReLU(double x)
 {
@@ -96,6 +98,12 @@ double Tanh_grad(double x)
 	return 1 - pow(Tanh(x), 2);
 }
 
+//random noise
+double rand_noise(double factor)
+{
+	return rand_nmlstd() * factor;
+}
+
 //seed random using sec * nsec
 int strand(void)
 {
@@ -107,11 +115,11 @@ int strand(void)
 }
 
 //Normal distro random
-double rand_uniform()
+double rand_uniform(void)
 {
 	return (double) rand() / RAND_MAX;
 }
-double box_muller()
+double box_muller(void)
 {
 	static double r[2];
 	double u1, u2, r1, r2;
