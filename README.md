@@ -43,11 +43,11 @@ See manual:
 ./LR -h
 ```
 
-### Other
+### Statistics
 
-1. **./stat/plot.py**  
-   A simple plot python program for plotting the CSV formatted file that can be outputted by LR using `-f` option (see Args).  
-   You can also pass multiple sets of data into it for comparison, but too much will make the plot seem chaotic.
+**./stat/plot.py**  
+ A simple plot python program for plotting the CSV formatted file that can be outputted by LR using `-f` option (see Args).  
+ You can also pass multiple sets of data into it for comparison, but too much will make the plot seem chaotic.
 
 #### Usage
 

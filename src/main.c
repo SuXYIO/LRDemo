@@ -197,7 +197,13 @@ int main(int const argc, char* const argv[])
 				break;
 		}
 	} while (true);
-	printf("%sSUCC: l >= l_exp. \n%sseed = %d, \niter = %d, \nnf.w_init = %.*f, nf.b_init = %.*f, \nnf.w = %.*f, nf.b = %.*f, \nng.w = %.*f, ng.b = %.*f, \neta = %.*f, batch_size = %d, \nnf.l = %.*f, l_exp = %.*f, noise_factor = %.*f\n%s", COLOR_SUCC, COLOR_NORM, seed, iter, FPP, nf_w_init, FPP, nf_b_init, FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, eta, batch_size, FPP, nf.l, FPP, l_exp, FPP, noise_factor, COLOR_END);
+	char* succ_msg;
+	if (max_epochs != 0) {
+		succ_msg = "epoch >= max_epochs";
+	} else {
+		succ_msg = "l >= l_exp";
+	}
+	printf("%sSUCC: %s. \n%sseed = %d, \niter = %d, \nnf.w_init = %.*f, nf.b_init = %.*f, \nnf.w = %.*f, nf.b = %.*f, \nng.w = %.*f, ng.b = %.*f, \neta = %.*f, batch_size = %d, \nnf.l = %.*f, l_exp = %.*f, noise_factor = %.*f\n%s", COLOR_SUCC, succ_msg, COLOR_NORM, seed, iter, FPP, nf_w_init, FPP, nf_b_init, FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, eta, batch_size, FPP, nf.l, FPP, l_exp, FPP, noise_factor, COLOR_END);
 	if (writetofile == true)
 		fclose(csvfilep);
 	return 0;

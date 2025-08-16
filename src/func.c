@@ -172,7 +172,7 @@ int printversion(void)
 //show help (manual) page
 int manualpage(void)
 {
-	char const manual_path[] = "./manual.txt";
+	char const manual_path[] = "./help.txt";
 	char const less_cmd[] = "less -R ";
 	char cmd[sizeof(less_cmd) + sizeof(manual_path)] = "";
 	sprintf(cmd, "%s%s", less_cmd, manual_path);

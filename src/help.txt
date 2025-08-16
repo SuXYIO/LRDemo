@@ -33,7 +33,7 @@ OPTIONS
 
 	-e [eta]	Define eta (learning rate), 0.001 is default.
 
-	-l [expectedloss]	Define expected loss, the training ends when loss < expectedloss, 0.001 is default.
+	-l [expectedloss]	Define expected loss, the training ends when loss < expectedloss, 0.001 is default. Ignored if -E is set.
 
 	-n [noisefactor]	Define the noise factor for data neuron g(x), which is multiplied with a standard normal distribution as noise, 0 is default.
 	

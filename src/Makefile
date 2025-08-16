@@ -5,7 +5,6 @@ CDBFLAGS = -g
 
 TARG = LR
 DBTARG = LR.db
-TARGS = $(shell find . -name '*.out')
 
 DEP = $(shell find . -name '*.h')
 CCODE = $(shell find . -name '*.c')
@@ -22,4 +21,4 @@ debug: $(CCODE) $(DEP)
 	$(CC) $(CDBFLAGS) -o $(DBTARG) $(CCODE) $(CFLAGSEND)
 
 clean: 
-	rm -rf $(TARGS) $(OBJ) $(DSYM)
+	rm -rf $(TARG) $(OBJ) $(DSYM)

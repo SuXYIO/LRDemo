@@ -21,7 +21,7 @@ double g(double x)
 
 //Loss function
 //MSE & MSE gradient
-//MSE(y, y_pred) = (1/n) * ∑(y - y_pred)^2
+//MSE(y, y_pred) = (1/n) * sum(y - y_pred)^2
 //e: expected; a: actual; 
 double MSE(double e, double a)
 {
