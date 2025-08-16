@@ -1,43 +1,42 @@
 #!/usr/bin/env python3
-"""
-MultiPlot
-Simple example of using two output CSV files to plot one graph.
-
-Usage
-    python3 multiplot.py [filepath0] [filepath1] ...
-    or
-    ./multiplot.py [filepath0] [filepath1] ...
-        "filepath" is the path to the CSV formatted file.
-"""
-import sys
-import matplotlib.pyplot as plt
+import argparse
 import pandas as pd
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
-csvfilename = []
-if len(sys.argv) <= 1:
-    print("ERROR: too few arguments. ")
-    exit(-1)
-for i in range(len(sys.argv) - 1):
-    csvfilename.append(sys.argv[i + 1])
+pd.options.plotting.backend = "plotly"
 
-df = []
-ln = []
-print(csvfilename)
-for i in range(len(sys.argv) - 1):
-    df.append(pd.read_csv(csvfilename[i]))
-    ln.append(df[i].index)
-# create plot
-for i in range(len(sys.argv) - 1):
-    plt.plot(ln[i], df[i]["f_w"], label=f"f_w{i}")
-    plt.plot(ln[i], df[i]["f_b"], label=f"f_b{i}")
-    plt.plot(ln[i], df[i]["g_w"], label=f"g_w{i}")
-    plt.plot(ln[i], df[i]["g_b"], label=f"g_b{i}")
-    plt.plot(ln[i], df[i]["l"], label=f"l{i}")
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Plot data for LRDemo")
+    parser.add_argument("dataFiles", nargs="+", help="Data files name")
+    parser.add_argument(
+        "-g",
+        "--showgrad",
+        action="store_true",
+    )
+    args = parser.parse_args()
 
-plt.title(f"LRPlot for {csvfilename}")
-plt.xlabel("iter")
-plt.ylabel("value")
-plt.legend()
+    # read data
+    datas = []
+    for filename in args.dataFiles:
+        data = pd.read_csv(filename)
+        if not args.showgrad:
+            data = data.drop(["f_wg", "f_bg"], axis=1)
+        datas.append(data)
 
-plt.show()
-exit(0)
+    # plot
+    fig = make_subplots(
+        rows=1,
+        cols=len(datas),
+        subplot_titles=[f"Plot {f}" for f in args.dataFiles],
+    )
+    # fig = data.plot(kind="line", title="LR data")
+
+    for i, df in enumerate(datas):
+        for col in df.columns:
+            fig.add_trace(
+                go.Scatter(x=df.index, y=df[col], name=f"{col}{i}"), row=1, col=i + 1
+            )
+
+    fig.update_layout(title_text="LR Plot")
+    fig.show()

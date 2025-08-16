@@ -11,6 +11,7 @@ extern int a_func_num;
 extern int l_func_num;
 
 //declare getfunc functions
+//God damn procedure oriented programming, gotta go through these crap function pointers and naming bullshit
 double (*get_a_func(int funcnum))(double);
 double (*get_l_func(int funcnum))(double, double);
 double (*get_agrad_func(int funcnum))(double);

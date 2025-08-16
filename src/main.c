@@ -115,7 +115,7 @@ int main(int const argc, char* const argv[])
 			printf("%sERROR: error opening file. \n%s", COLOR_ERROR, COLOR_END);
 			return -1;
 		}
-		fprintf(csvfilep, "f_w,f_b,g_w,g_b,l,nf.wg,nf.bg\n");
+		fprintf(csvfilep, "f_w,f_b,g_w,g_b,l,f_wg,f_bg\n");
 	}
 	//get functions
 	if (getfuncs() == -1) {
@@ -174,12 +174,21 @@ int main(int const argc, char* const argv[])
 		nf.b -= eta * nf.bg;
 		//print results
 		if (writetofile == true)
-			fprintf(csvfilep, "%.*f,%.*f,%.*f,%.*f,%.*f,%.*f,%.*f\n", FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, nf.l, FPP, nf.wg, FPP, nf.bg);
+			fprintf(csvfilep,
+				"%.*f,%.*f,%.*f,%.*f,%.*f,%.*f,%.*f\n",
+				FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, nf.l, FPP, nf.wg, FPP, nf.bg
+			);
 		if (verbose == true)
-			printf("%siter = %d, nf.w = %.*f, nf.b = %.*f, ng.w = %.*f, ng.b = %.*f, nf.l = %.*f, nf.wg = %.*f, nf.bg = %.*f; \n%s", COLOR_NORM, iter, FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, nf.l, FPP, nf.wg, FPP, nf.bg, COLOR_END);
+			printf(
+				"%siter = %d, f_w = %.*f, f_b = %.*f, g_w = %.*f, g_b = %.*f, l = %.*f, f_wg = %.*f, f_bg = %.*f; \n%s",
+				COLOR_NORM, iter, FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, nf.l, FPP, nf.wg, FPP, nf.bg, COLOR_END
+			);
 		//check if gradient explosion
 		if (isfinite(nf.l) != true || isfinite(nf.wg) != true || isfinite(nf.bg) != true) {
-			printf("%sERROR: l or nf.wg or nf.bg not finite, probably gradient explosion. \n%sseed = %d, \niter = %d, \nnf.w = %.*f, nf.b = %.*f, \nng.w = %.*f, ng.b = %.*f, \neta = %.*f, batch_size = %d, \nnf.l = %.*f, l_exp = %.*f, noise_factor = %.*f\n%s", COLOR_ERROR, COLOR_NORM, seed, iter, FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, eta, batch_size, FPP, nf.l, FPP, l_exp, FPP, noise_factor, COLOR_END);
+			printf(
+				"%sERROR: l or f_wg or f_bg not finite, probably gradient explosion. \n%sseed = %d, \niter = %d, \nf_w = %.*f, f_b = %.*f, \ng_w = %.*f, g_b = %.*f, \neta = %.*f, batch_size = %d, \nl = %.*f, l_exp = %.*f, noise_factor = %.*f\n%s",
+				COLOR_ERROR, COLOR_NORM, seed, iter, FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, eta, batch_size, FPP, nf.l, FPP, l_exp, FPP, noise_factor, COLOR_END
+			);
 			if (writetofile == true)
 				fclose(csvfilep);
 			return -1;
@@ -203,7 +212,10 @@ int main(int const argc, char* const argv[])
 	} else {
 		succ_msg = "l >= l_exp";
 	}
-	printf("%sSUCC: %s. \n%sseed = %d, \niter = %d, \nnf.w_init = %.*f, nf.b_init = %.*f, \nnf.w = %.*f, nf.b = %.*f, \nng.w = %.*f, ng.b = %.*f, \neta = %.*f, batch_size = %d, \nnf.l = %.*f, l_exp = %.*f, noise_factor = %.*f\n%s", COLOR_SUCC, succ_msg, COLOR_NORM, seed, iter, FPP, nf_w_init, FPP, nf_b_init, FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, eta, batch_size, FPP, nf.l, FPP, l_exp, FPP, noise_factor, COLOR_END);
+	printf(
+		"%sSUCC: %s. \n%sseed = %d, \niter = %d, \nf_w_init = %.*f, f_b_init = %.*f, \nf_w = %.*f, f_b = %.*f, \ng_w = %.*f, g_b = %.*f, \neta = %.*f, batch_size = %d, \nf_l = %.*f, l_exp = %.*f, noise_factor = %.*f\n%s",
+		COLOR_SUCC, succ_msg, COLOR_NORM, seed, iter, FPP, nf_w_init, FPP, nf_b_init, FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, eta, batch_size, FPP, nf.l, FPP, l_exp, FPP, noise_factor, COLOR_END
+	);
 	if (writetofile == true)
 		fclose(csvfilep);
 	return 0;
