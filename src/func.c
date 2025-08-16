@@ -184,7 +184,7 @@ int manualpage(void)
 		char ch;
 		file = fopen("example.txt", "r");
 		if (file == NULL) {
-			printf("%sError opening ./manual.txt. %sCheck if manual.txt exists. \n%s", COLOR_ERROR, COLOR_END, COLOR_END);
+			fprintf(stderr, "%sError opening ./manual.txt. %sCheck if manual.txt exists. \n%s", COLOR_ERROR, COLOR_END, COLOR_END);
 			return -1;
 		}
 		while ((ch = fgetc(file)) != EOF) {

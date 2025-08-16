@@ -78,7 +78,7 @@ int main(int const argc, char* const argv[])
 				return 0;
 				break;
 			case '?':
-				printf("%sError: invalid option: '%c'. %s\nUse \"./LR -h\" for help. \n%s", COLOR_ERROR, optopt, COLOR_NORM, COLOR_END);
+				fprintf(stderr, "%sError: invalid option: '%c'. %s\nUse \"./LR -h\" for help. \n%s", COLOR_ERROR, optopt, COLOR_NORM, COLOR_END);
 				return -1;
 				break;
 		}
@@ -104,7 +104,7 @@ int main(int const argc, char* const argv[])
 			return 0;
 		} else {
 			//error
-			printf("%sERROR: return of isusablefile() is invalid. \n%s", COLOR_ERROR, COLOR_END);
+			fprintf(stderr, "%sERROR: return of isusablefile() is invalid. \n%s", COLOR_ERROR, COLOR_END);
 			return -1;
 		}
 	}
@@ -112,14 +112,14 @@ int main(int const argc, char* const argv[])
 	if (writetofile == true) {
 		csvfilep = fopen(csvfilename, "w");
 		if (csvfilep == NULL) {
-			printf("%sERROR: error opening file. \n%s", COLOR_ERROR, COLOR_END);
+			fprintf(stderr, "%sERROR: error opening file. \n%s", COLOR_ERROR, COLOR_END);
 			return -1;
 		}
 		fprintf(csvfilep, "f_w,f_b,g_w,g_b,l,f_wg,f_bg\n");
 	}
 	//get functions
 	if (getfuncs() == -1) {
-		printf("%sERROR: error activation or loss function. \n%s", COLOR_ERROR, COLOR_END);
+		fprintf(stderr, "%sERROR: error activation or loss function. \n%s", COLOR_ERROR, COLOR_END);
 		return -1;
 	}
 	//count iteration
@@ -185,7 +185,8 @@ int main(int const argc, char* const argv[])
 			);
 		//check if gradient explosion
 		if (isfinite(nf.l) != true || isfinite(nf.wg) != true || isfinite(nf.bg) != true) {
-			printf(
+			fprintf(
+				stderr,
 				"%sERROR: l or f_wg or f_bg not finite, probably gradient explosion. \n%sseed = %d, \niter = %d, \nf_w = %.*f, f_b = %.*f, \ng_w = %.*f, g_b = %.*f, \neta = %.*f, batch_size = %d, \nl = %.*f, l_exp = %.*f, noise_factor = %.*f\n%s",
 				COLOR_ERROR, COLOR_NORM, seed, iter, FPP, nf.w, FPP, nf.b, FPP, ng.w, FPP, ng.b, FPP, eta, batch_size, FPP, nf.l, FPP, l_exp, FPP, noise_factor, COLOR_END
 			);

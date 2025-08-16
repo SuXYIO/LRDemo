@@ -13,6 +13,7 @@ if __name__ == "__main__":
         "-g",
         "--showgrad",
         action="store_true",
+        help="Show gradient for w and b, default hidden, but can also toggle in legend",
     )
     args = parser.parse_args()
 
